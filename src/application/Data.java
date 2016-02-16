@@ -3,14 +3,17 @@ package application;
 import java.util.HashMap;
 
 public class Data {
-	static String nodePattern = "(\\w+)\\s(\\w+)\\s\\{(?<=\\{)(.*?)(?=\\})";
-	static String osPattern = "os\\s?:\\s?(\\w+)";
-	static String verPattern = "ver\\s?:\\s?\"(\\d+(?:\\.?)\\d+)\"";
-	static String srcPattern = "src\\s?:\\s?\"((?:\\/\\w+)+)\"";
-	static String ethPattern = "(eth\\d)\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
-	static String subnetPattern = "subnet\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
-	static String netmaskPattern = "netmask\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
-	static String infPattern = "inf\\s?:\\s?(.*)";
-	static HashMap <String, VM> vmMap = new HashMap<String, VM>();
-	static HashMap <String, HUB> hubMap = new HashMap<String, HUB>();
+	// Regex used to parse various patterns of the config file
+	static final String nodePattern = "(\\w+)\\s(\\w+)\\s\\{(?<=\\{)(.*?)(?=\\})";
+	static final String osPattern = "os\\s?:\\s?(\\w+)";
+	static final String verPattern = "ver\\s?:\\s?\"(\\d+(?:\\.?)\\d+)\"";
+	static final String srcPattern = "src\\s?:\\s?\"((?:\\/\\w+)+)\"";
+	static final String ethPattern = "(eth\\d)\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
+	static final String subnetPattern = "subnet\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
+	static final String netmaskPattern = "netmask\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
+	static final String infPattern = "inf\\s?:\\s?(.*)";
+
+	// Hash maps containing vm's and hubs
+	static HashMap<String, VM> vmMap = new HashMap<String, VM>();
+	static HashMap<String, HUB> hubMap = new HashMap<String, HUB>();
 }

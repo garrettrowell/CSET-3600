@@ -43,10 +43,13 @@ public class VM {
 	}
 
 	public void getInterfaces() {
+		// iterates through the interface hash map and prints each combination
+		// of keys and values to the command line. Ex: eth0 192.168.0.1
+		System.out.println("Interface(s):");
 		for (Map.Entry<String, String> entry : interfaces.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
-			System.out.println(key + " " + value);
+			System.out.println("\t" + key + " " + value);
 		}
 	}
 
