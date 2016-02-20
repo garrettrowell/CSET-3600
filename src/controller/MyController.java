@@ -62,13 +62,32 @@ public class MyController implements Initializable {
 		//resize canvas to the width and height of the TabPane
 		canvas.widthProperty().bind(tabPane.widthProperty());
 		canvas.heightProperty().bind(tabPane.heightProperty());
+		
+		System.out.println("Number of Vm's Present "+application.Data.vmMap.keySet().size());
+		System.out.println("Number of Hub's Present "+application.Data.hubMap.keySet().size());
+		int hubx = 50;
+		int huby = 50;
+		for(int i=0; i<=application.Data.hubMap.keySet().size()-1; i++){
+			//hubx=hubx+100;
+			if (i>0) {
+			  huby=huby+150;
+			}
+			gc.setFill(Color.BLUE);
+			gc.fillRect(hubx, huby, 100, 100);
 
-		gc.setFill(Color.BLUE);
-		gc.fillRect(100, 100, 100, 100);
-		gc.setFill(Color.RED);
-		gc.fillOval(100, 400, 100, 100);
-		gc.setFill(Color.AQUAMARINE);
-		gc.fillOval(550, 900, 100, 100);
+		}
+		
+		int vmx = 200;
+		int vmy = 50;
+		for(int i=0; i<=application.Data.vmMap.keySet().size()-1; i++){
+			//hubx=hubx+100;
+			if (i>0) {
+				vmy=vmy+150;
+			}
+			gc.setFill(Color.RED);
+			gc.fillRect(vmx, vmy, 100, 100);
+
+		}
 
 		
 	}

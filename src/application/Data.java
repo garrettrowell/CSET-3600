@@ -14,6 +14,6 @@ public class Data {
 	static final String infPattern = "inf\\s?:\\s?(.*)";
 
 	// Hash maps containing vm's and hubs
-	static HashMap<String, VM> vmMap = new HashMap<String, VM>();
-	static HashMap<String, HUB> hubMap = new HashMap<String, HUB>();
+	public static HashMap<String, VM> vmMap = new HashMap<String, VM>();
+	public static HashMap<String, HUB> hubMap = new HashMap<String, HUB>();
 }
