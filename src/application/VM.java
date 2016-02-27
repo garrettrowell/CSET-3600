@@ -42,15 +42,18 @@ public class VM {
 		this.os = os;
 	}
 
-	public void getInterfaces() {
+	public String getInterfaces() {
 		// iterates through the interface hash map and prints each combination
 		// of keys and values to the command line. Ex: eth0 192.168.0.1
+		String ethoString = "";
 		System.out.println("Interface(s):");
 		for (Map.Entry<String, String> entry : interfaces.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
+			ethoString += key.toString() + ": " + value.toString() + "\n";
 			System.out.println("\t" + key + " " + value);
 		}
+		return ethoString;
 	}
 
 	public void setInterfaces(String key, String value) {

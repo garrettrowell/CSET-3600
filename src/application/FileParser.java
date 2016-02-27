@@ -49,16 +49,6 @@ public class FileParser {
 			}
 		}
 	}
-	
-	public void solMatcher(String solution, String regex, String inputs) {
-		Pattern patt = Pattern.compile(regex);
-		Matcher match = patt.matcher(inputs);
-		while(true) {
-			if(match.find()) {
-				Data.solMap.get(solution).setConnections(match.group(1), match.group(2));
-			}
-		}
-	}
 
 	public FileParser(File selectedFile) {
 		String file = null;
@@ -121,15 +111,6 @@ public class FileParser {
 					System.out.println("subnet\t=\t"+Data.hubMap.get(match.group(2)).getSubnet());
 					System.out.println("netmask\t=\t"+Data.hubMap.get(match.group(2)).getNetmask());
 					Data.hubMap.get(match.group(2)).getInf();
-					System.out.println("---------------------------------");
-				} else if (match.group(1).equals("partial_solution")) {
-					// if the node is a partial_solution
-					// create a new partial_solution object
-					Data.solMap.put(match.group(1), new PARTIALSOLUTION());
-					//parse and set the partial_solution
-					solMatcher(match.group(1), Data.solPattern, match.group(3));
-					System.out.println("Found partial_solution:");
-					Data.solMap.get(match.group(1)).getConnections();
 					System.out.println("---------------------------------");
 				}
 			} else {

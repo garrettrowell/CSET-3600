@@ -1,13 +1,14 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HUB {
 	private String subnet;
 	private String netmask;
 	private String name;
 	private ArrayList<String> inf = new ArrayList<String>();
-
+	
 	public String getName() {
 		return name;
 	}
@@ -32,13 +33,21 @@ public class HUB {
 		this.netmask = netmask;
 	}
 
-	public void getInf() {
+	public String getInf() {
 		// Simply iterates through the array list of interfaces
 		// and prints each out to the console
+		String infList = "";
 		System.out.println("Inf(s):");
 		for (int i = 0; i < inf.size(); i++) {
+			if(inf.size() - i == 1) {
+				infList += inf.get(i);
+			}else {
+				infList += inf.get(i) + " , ";
+			}
+			
 			System.out.println("\t" + inf.get(i));
 		}
+		return infList;
 	}
 
 	public void setInf(String input) {
