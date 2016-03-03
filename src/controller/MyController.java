@@ -5,18 +5,26 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import application.Data;
+import org.controlsfx.control.PopOver;
+
 import application.HUB;
 import application.VM;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -114,6 +122,26 @@ public class MyController implements Initializable {
 			StackPane stack = new StackPane();
 			stack.getChildren().addAll(rec, name);
 			
+			stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					VBox content = new VBox();
+					content.setId("vboxForPopover");
+					Label name = new Label(application.Data.hubMap.get(currentHubName).getName().toString());
+					name.setId("popoverLabel");
+					TableView table = new TableView();
+					table.setEditable(true);
+					table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+					TableColumn firstColumn = new TableColumn("Property");
+					TableColumn secondColumn = new TableColumn("Value");
+					
+					table.getColumns().addAll(firstColumn, secondColumn);
+					
+					content.getChildren().addAll(name, table);
+					PopOver popOver = new PopOver(content);
+					popOver.show(stack);
+				}
+			});
 			//Location of entity on the pane
 			stack.relocate(hubx, huby);
 			canvas.getChildren().add(stack);

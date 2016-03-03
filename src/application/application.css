@@ -1,1 +1,9 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+#vboxForPopover{
+	-fx-padding: 15px;
+}
+
+#popoverLabel{
+	-fx-font-size: 25px;
+	-fx-font-family: 'serif';
+}
