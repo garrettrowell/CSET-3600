@@ -13,15 +13,18 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -39,11 +42,13 @@ public class MyController implements Initializable {
 	@FXML
 	AnchorPane anchorPane;
 	
+	//These are the toggle button and the VBox container for the form
+	ToggleButton btnEdit = new ToggleButton("Edit");
+	VBox formPane = new VBox(5);
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		//Creates Listeners for Height and Width of the canvas
-		//anchorPane.widthProperty().addListener(observable -> drawGraphical());
-		//anchorPane.heightProperty().addListener(observable -> drawGraphical());
+	
 	}
 	
 
@@ -85,10 +90,6 @@ public class MyController implements Initializable {
 	
 	@FXML
 	private void drawGraphical() {
-		/*
-		canvas.widthProperty().bind(graphAnchor.widthProperty());
-		canvas.heightProperty().bind(graphAnchor.heightProperty());
-		*/
 		System.out.println("Number of Vm's Present "+application.Data.vmMap.keySet().size());
 		System.out.println("Number of Hub's Present "+application.Data.hubMap.keySet().size());
 		
@@ -122,22 +123,61 @@ public class MyController implements Initializable {
 			StackPane stack = new StackPane();
 			stack.getChildren().addAll(rec, name);
 			
+			//eventhandler for when the hubs are clicked
 			stack.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					VBox content = new VBox();
-					content.setId("vboxForPopover");
-					Label name = new Label(application.Data.hubMap.get(currentHubName).getName().toString());
-					name.setId("popoverLabel");
-					TableView table = new TableView();
-					table.setEditable(true);
-					table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-					TableColumn firstColumn = new TableColumn("Property");
-					TableColumn secondColumn = new TableColumn("Value");
+					//this VBox is for holding everything together so we can just throw all content onto popover at once
+					VBox content = new VBox(5);
+					content.getStyleClass().add("popover-content");
+					content.setId("contentPane");
 					
-					table.getColumns().addAll(firstColumn, secondColumn);
+					//the first row contains the big label and the toggle button
+					HBox headerRow = new HBox(25);
+					Label lname = new Label(application.Data.hubMap.get(currentHubName).getName().toString());
+					lname.getStyleClass().add("popover-label");
+					btnEdit.setPrefSize(50, 10);
+					headerRow.getChildren().addAll(lname,btnEdit);
 					
-					content.getChildren().addAll(name, table);
+					//just a line separator
+					Separator hr = new Separator(Orientation.HORIZONTAL);
+					hr.minWidth(javafx.scene.control.Control.USE_COMPUTED_SIZE);
+					
+					//setting id for the formPane to be search for(which is declare at the very top)
+					formPane.setId("formPane");
+					
+					//the first row of the form
+					//each row of the form has one label and a TextField
+					HBox formRow1 = new HBox(15);
+					formRow1.getStyleClass().add("popover-form");
+					Label lformName = new Label("Name:");
+					lformName.getStyleClass().add("popover-form-label");
+					TextField tfFormName = new TextField();
+					tfFormName.getStyleClass().add("popover-form-textfield");
+					tfFormName.setText(application.Data.hubMap.get(currentHubName).getName());
+					tfFormName.setEditable(false);
+					
+					//Add the label and the Textfield to row1
+					formRow1.getChildren().addAll(lformName,tfFormName);
+					
+					//Here is same concept for row1 but for row2
+					HBox formRow2 = new HBox(15);
+					formRow2.getStyleClass().add("popover-form");
+					Label lformSubnet = new Label("Subnet:");
+					lformSubnet.getStyleClass().add("popover-form-label");
+					TextField tfFormSubnet = new TextField();
+					tfFormSubnet.getStyleClass().add("popover-form-textfield");
+					tfFormSubnet.setText(application.Data.hubMap.get(currentHubName).getSubnet());
+					tfFormSubnet.setEditable(false);
+					formRow2.getChildren().addAll(lformSubnet,tfFormSubnet);
+					
+					//Add both rows into the formPane container so it becomes one form
+					formPane.getChildren().addAll(formRow1,formRow2);
+					
+					//Add all the headerRow, line separator, and the form to one big container
+					content.getChildren().addAll(headerRow, hr, formPane);
+					
+					//Add the large final container into the popover
 					PopOver popOver = new PopOver(content);
 					popOver.show(stack);
 				}
@@ -193,5 +233,22 @@ public class MyController implements Initializable {
 		} else {
 			maxY=vmy-150;
 		}
+		
+		//Add ability to go into edit mode for the Textfield
+		btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				//Query the popover setup schema to eventually find the Textfields and set the editable property based off the btnEdit
+				for(Node node: formPane.getChildren()) {
+					if(node instanceof HBox) {
+						for(Node innerNode: ((HBox) node).getChildren()) {
+							if(innerNode instanceof TextField) {
+								((TextField) innerNode).editableProperty().bindBidirectional(btnEdit.selectedProperty());
+							}
+						}
+					}
+				}
+			}
+		});
 	}
 }

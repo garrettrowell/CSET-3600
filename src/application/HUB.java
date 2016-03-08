@@ -1,12 +1,12 @@
 package application;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class HUB {
 	private String subnet;
 	private String netmask;
 	private String name;
+	private int posX, posY;
 	private ArrayList<String> inf = new ArrayList<String>();
 	
 	public String getName() {
@@ -52,5 +52,21 @@ public class HUB {
 
 	public void setInf(String input) {
 		inf.add(input);
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
 	}
 }

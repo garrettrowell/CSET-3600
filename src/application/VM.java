@@ -8,6 +8,7 @@ public class VM {
 	private String os;
 	private String src;
 	private Double ver;
+	private int posX, posY;
 	private HashMap<String, String> interfaces = new HashMap<String, String>();
 
 	public String getName() {
@@ -58,6 +59,22 @@ public class VM {
 
 	public void setInterfaces(String key, String value) {
 		interfaces.put(key, value);
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
 	}
 
 }
