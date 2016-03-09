@@ -22,6 +22,12 @@
 	-fx-min-width: 75px;	
 }
 
-.popover-form-textfield{
+.popover-form-textfield-inactive{
 	-fx-min-width: 12px;
+	-fx-control-inner-background: #808080;
+}
+
+.popover-form-textfield-active{
+	-fx-min-width: 12px;
+	-fx-control-inner-background: white;
 }

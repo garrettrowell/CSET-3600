@@ -56,7 +56,12 @@ public class VM {
 		}
 		return ethoString;
 	}
-
+	
+	//this might be for temp
+	public HashMap<String, String> getInterfaceHashMap(){
+		return interfaces;
+	}
+	
 	public void setInterfaces(String key, String value) {
 		interfaces.put(key, value);
 	}
