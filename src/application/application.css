@@ -1,1 +1,33 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.popover-content{
+	-fx-padding: 10px;
+}
+
+.popover-label{
+	-fx-font-size: 25px;
+	-fx-font-family: 'serif';
+}
+
+.popover-seperator{
+	
+}
+
+.popover-form{
+	-fx-hgap: 15px;
+	-fx-vgap: 15px;
+}
+
+.popover-form-label{
+	-fx-font-size: 15px;
+	-fx-min-width: 75px;	
+}
+
+.popover-form-textfield-inactive{
+	-fx-min-width: 12px;
+	-fx-control-inner-background: #808080;
+}
+
+.popover-form-textfield-active{
+	-fx-min-width: 12px;
+	-fx-control-inner-background: white;
+}
