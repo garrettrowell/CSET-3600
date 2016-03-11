@@ -92,23 +92,23 @@ public class MyController implements Initializable {
 			canvas.getChildren().add(application.Graphics.createVMNode(currentVM));
 			Data.vmPosY += 150;
 		}
-				
+		
 		//Add ability to go into edit mode for the Textfield
-		btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				//Query the popover setup schema to eventually find the Textfields and set the editable property based off the btnEdit
-				for(Node node: formPane.getChildren()) {
+				for(Node node: controller.MyController.formPane.getChildren()) {
 					if(node instanceof HBox) {
 						for(Node innerNode: ((HBox) node).getChildren()) {
 							if(innerNode instanceof TextField) {
-								((TextField) innerNode).editableProperty().bindBidirectional(btnEdit.selectedProperty());
-								if(btnEdit.isSelected()) {
+								((TextField) innerNode).editableProperty().bindBidirectional(controller.MyController.btnEdit.selectedProperty());
+								if(controller.MyController.btnEdit.isSelected()) {
 									innerNode.getStyleClass().remove("popover-form-textfield-inactive");
 									innerNode.getStyleClass().add("popover-form-textfield-active");
 								}
 								
-								if(!btnEdit.isSelected()) {
+								if(!controller.MyController.btnEdit.isSelected()) {
 									innerNode.getStyleClass().remove("popover-form-textfield-active");
 									innerNode.getStyleClass().add("popover-form-textfield-inactive");
 								}

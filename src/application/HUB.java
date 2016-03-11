@@ -33,21 +33,8 @@ public class HUB {
 		this.netmask = netmask;
 	}
 
-	public String getInf() {
-		// Simply iterates through the array list of interfaces
-		// and prints each out to the console
-		String infList = "";
-		System.out.println("Inf(s):");
-		for (int i = 0; i < inf.size(); i++) {
-			if(inf.size() - i == 1) {
-				infList += inf.get(i);
-			}else {
-				infList += inf.get(i) + " , ";
-			}
-			
-			System.out.println("\t" + inf.get(i));
-		}
-		return infList;
+	public ArrayList<String> getInf() {
+		return inf;
 	}
 
 	public void setInf(String input) {

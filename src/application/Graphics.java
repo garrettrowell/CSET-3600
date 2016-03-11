@@ -37,6 +37,7 @@ public class Graphics {
 			@Override
 			public void handle(MouseEvent event) {
 				PopOver popOver = new PopOver(createHUBPopOverContent(hubObject));
+				popOver.setDetachable(false);
 				popOver.show(nodeContainer);
 			}
 			
@@ -63,6 +64,7 @@ public class Graphics {
 			@Override
 			public void handle(MouseEvent event) {
 				PopOver popOver = new PopOver(createVMPopOverContent(vmObject));
+				popOver.setDetachable(false);
 				popOver.show(nodeContainer);
 			}			
 		});
@@ -120,23 +122,45 @@ public class Graphics {
 		tfFormNetmask.setText(hubObject.getNetmask());
 		tfFormNetmask.setEditable(false);
 		formRow3.getChildren().addAll(lformNetmask,tfFormNetmask);
-		
+	
 		//Row 4 (Hub interfaces)
-		HBox formRow4 = new HBox(15);
-		formRow4.getStyleClass().add("popover-form");
-		Label lformInf = new Label("Interfaces:");
-		lformInf.getStyleClass().add("popover-form-label");
-		TextField tfFormInf = new TextField();
-		tfFormInf.getStyleClass().add("popover-form-textfield-inactive");
-		tfFormInf.setText(hubObject.getInf());
-		tfFormInf.setEditable(false);
-		formRow4.getChildren().addAll(lformInf,tfFormInf);
+//		HBox formRow4 = new HBox(15);
+//		formRow4.getStyleClass().add("popover-form");
+//		Label lformInf = new Label("Interfaces:");
+//		lformInf.getStyleClass().add("popover-form-label");
+//		TextField tfFormInf = new TextField();
+//		tfFormInf.getStyleClass().add("popover-form-textfield-inactive");
+	//	tfFormInf.setText(hubObject.getInf());
+//		tfFormInf.setEditable(false);
+//		formRow4.getChildren().addAll(lformInf,tfFormInf);
 		
 		//add all the rows to make them one form, but clear it first
 		controller.MyController.formPane.getChildren().clear();
-		controller.MyController.formPane.getChildren().addAll(formRow1, formRow2, formRow3, formRow4);
+		controller.MyController.formPane.getChildren().addAll(formRow1, formRow2, formRow3);
 		
-		//this content container is eveything that is going to go on the PopOver
+		//this will dynamically add rows to the formPane base on the # of inf entries
+		int count = 0;
+		for(String inf : hubObject.getInf()) {
+			HBox ethRow = new HBox(15);
+			ethRow.getStyleClass().add("popover-form");
+			Label lformEth = new Label();
+			if (count==0 & hubObject.getInf().size() > 1){
+				lformEth.setText("Infs:");
+			} else if (count==0 & hubObject.getInf().size() == 0){
+				
+			}
+			lformEth.getStyleClass().add("popover-form-label");
+			TextField tfFormEth = new TextField();
+			tfFormEth.getStyleClass().add("popover-form-textfield-inactive");
+			tfFormEth.setText(inf);
+			tfFormEth.setEditable(false);
+			ethRow.getChildren().addAll(lformEth,tfFormEth);
+			
+			controller.MyController.formPane.getChildren().add(ethRow);
+			count++;
+		}
+		
+		//this content container is everything that is going to go on the PopOver
 		VBox content = new VBox(5);
 		content.getStyleClass().add("popover-content");
 		content.setId("contentPane");
@@ -197,6 +221,7 @@ public class Graphics {
 		tfFormNetmask.setText(vmObject.getVer().toString());
 		tfFormNetmask.setEditable(false);
 		formRow3.getChildren().addAll(lformNetmask,tfFormNetmask);
+		
 				
 		//Row 4 (VM src)
 		HBox formRow4 = new HBox(15);
@@ -213,7 +238,7 @@ public class Graphics {
 		controller.MyController.formPane.getChildren().clear();
 		controller.MyController.formPane.getChildren().addAll(formRow1, formRow2, formRow3, formRow4);
 		
-		//this will dynamically add rows to the formPane base on the # of eth0 entries
+		//this will dynamically add rows to the formPane base on the # of eth* entries
 		for(Map.Entry<String, String> entry : vmObject.getInterfaceHashMap().entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
@@ -241,6 +266,5 @@ public class Graphics {
 				
 		return content;
 	}
-
 
 }

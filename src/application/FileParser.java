@@ -1,6 +1,7 @@
 package application;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,7 +111,10 @@ public class FileParser {
 					System.out.println("name\t=\t" + Data.hubMap.get(match.group(2)).getName());
 					System.out.println("subnet\t=\t"+Data.hubMap.get(match.group(2)).getSubnet());
 					System.out.println("netmask\t=\t"+Data.hubMap.get(match.group(2)).getNetmask());
-					Data.hubMap.get(match.group(2)).getInf();
+					System.out.println("inf(s)\t=\t");
+					for (String inf : Data.hubMap.get(match.group(2)).getInf()){
+						System.out.println("\t\t"+inf);
+					}
 					System.out.println("---------------------------------");
 				}
 			} else {
