@@ -146,8 +146,8 @@ public class Graphics {
 			Label lformEth = new Label();
 			if (count==0 & hubObject.getInf().size() > 1){
 				lformEth.setText("Infs:");
-			} else if (count==0 & hubObject.getInf().size() == 0){
-				
+			} else if (count==0 & hubObject.getInf().size() == 1){
+				lformEth.setText("Inf:");
 			}
 			lformEth.getStyleClass().add("popover-form-label");
 			TextField tfFormEth = new TextField();
