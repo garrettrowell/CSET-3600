@@ -122,17 +122,6 @@ public class Graphics {
 		tfFormNetmask.setText(hubObject.getNetmask());
 		tfFormNetmask.setEditable(false);
 		formRow3.getChildren().addAll(lformNetmask,tfFormNetmask);
-	
-		//Row 4 (Hub interfaces)
-//		HBox formRow4 = new HBox(15);
-//		formRow4.getStyleClass().add("popover-form");
-//		Label lformInf = new Label("Interfaces:");
-//		lformInf.getStyleClass().add("popover-form-label");
-//		TextField tfFormInf = new TextField();
-//		tfFormInf.getStyleClass().add("popover-form-textfield-inactive");
-	//	tfFormInf.setText(hubObject.getInf());
-//		tfFormInf.setEditable(false);
-//		formRow4.getChildren().addAll(lformInf,tfFormInf);
 		
 		//add all the rows to make them one form, but clear it first
 		controller.MyController.formPane.getChildren().clear();
@@ -141,22 +130,22 @@ public class Graphics {
 		//this will dynamically add rows to the formPane base on the # of inf entries
 		int count = 0;
 		for(String inf : hubObject.getInf()) {
-			HBox ethRow = new HBox(15);
-			ethRow.getStyleClass().add("popover-form");
-			Label lformEth = new Label();
+			HBox infRow = new HBox(15);
+			infRow.getStyleClass().add("popover-form");
+			Label lformInf = new Label();
 			if (count==0 & hubObject.getInf().size() > 1){
-				lformEth.setText("Infs:");
+				lformInf.setText("Infs:");
 			} else if (count==0 & hubObject.getInf().size() == 1){
-				lformEth.setText("Inf:");
+				lformInf.setText("Inf:");
 			}
-			lformEth.getStyleClass().add("popover-form-label");
-			TextField tfFormEth = new TextField();
-			tfFormEth.getStyleClass().add("popover-form-textfield-inactive");
-			tfFormEth.setText(inf);
-			tfFormEth.setEditable(false);
-			ethRow.getChildren().addAll(lformEth,tfFormEth);
+			lformInf.getStyleClass().add("popover-form-label");
+			TextField tfFormInf = new TextField();
+			tfFormInf.getStyleClass().add("popover-form-textfield-inactive");
+			tfFormInf.setText(inf);
+			tfFormInf.setEditable(false);
+			infRow.getChildren().addAll(lformInf,tfFormInf);
 			
-			controller.MyController.formPane.getChildren().add(ethRow);
+			controller.MyController.formPane.getChildren().add(infRow);
 			count++;
 		}
 		
