@@ -66,6 +66,28 @@ public class MyController implements Initializable {
 		System.out.println("Number of Vm's Present "+application.Data.vmMap.keySet().size());
 		System.out.println("Number of Hub's Present "+application.Data.hubMap.keySet().size());
 		
+		//Draw every hub
+		for(Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
+			String currentHubName = entry.getKey();
+			HUB currentHub = application.Data.hubMap.get(currentHubName);
+			currentHub.setPosX(Data.xPos);
+			currentHub.setPosY(Data.yPos);
+			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub));
+			Data.xPos += 150;
+			
+			//Using the con arraylist in the HUB object as reference, draw the VM after each hub
+			for(String vmName : currentHub.getCon()) {
+				VM vmObject = application.Data.vmMap.get(vmName);
+				vmObject.setPosX(Data.xPos);
+				vmObject.setPosY(Data.yPos);
+				canvas.getChildren().add(application.Graphics.createVMNode(vmObject));
+				Data.yPos += 150;
+			}
+			Data.xPos += 150;
+			Data.yPos = 50;
+		}
+		
+		/*
 		//Draw a Blue rectangle for each hub
 		for(Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
 			String currentHubName = entry.getKey();
@@ -85,6 +107,6 @@ public class MyController implements Initializable {
 			canvas.getChildren().add(application.Graphics.createVMNode(currentVM));
 			Data.vmPosY += 150;
 		}
-
+		*/
 	}
 }

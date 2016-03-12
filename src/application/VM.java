@@ -1,6 +1,7 @@
 package application;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class VM {
@@ -9,7 +10,7 @@ public class VM {
 	private String src;
 	private Double ver;
 	private int posX, posY;
-	private HashMap<String, String> interfaces = new HashMap<String, String>();
+	private LinkedHashMap<String, String> interfaces = new LinkedHashMap<String, String>();
 
 	public String getName() {
 		return name;

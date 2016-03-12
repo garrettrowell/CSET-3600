@@ -122,6 +122,7 @@ public class FileParser {
 				break;
 			}
 		}
-
+		//sort the connections
+		Data.sortConnections();
 	}
 }

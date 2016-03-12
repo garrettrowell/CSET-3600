@@ -8,6 +8,7 @@ public class HUB {
 	private String name;
 	private int posX, posY;
 	private ArrayList<String> inf = new ArrayList<String>();
+	private ArrayList<String> con = new ArrayList<String>();
 	
 	public String getName() {
 		return name;
@@ -55,5 +56,13 @@ public class HUB {
 
 	public void setPosX(int posX) {
 		this.posX = posX;
+	}
+
+	public ArrayList<String> getCon() {
+		return con;
+	}
+
+	public void setCon(String vmName) {
+		this.con.add(vmName);
 	}
 }
