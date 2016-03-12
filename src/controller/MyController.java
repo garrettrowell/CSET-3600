@@ -8,19 +8,13 @@ import application.HUB;
 import application.VM;
 import application.Data;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 public class MyController implements Initializable {
 	@FXML
@@ -34,7 +28,6 @@ public class MyController implements Initializable {
 	
 	//These are the toggle button and the VBox container for the form
 	public static ToggleButton btnEdit = new ToggleButton("Edit");
-	public static VBox formPane = new VBox(5);
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -92,31 +85,6 @@ public class MyController implements Initializable {
 			canvas.getChildren().add(application.Graphics.createVMNode(currentVM));
 			Data.vmPosY += 150;
 		}
-		
-		//Add ability to go into edit mode for the Textfield
-		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				//Query the popover setup schema to eventually find the Textfields and set the editable property based off the btnEdit
-				for(Node node: controller.MyController.formPane.getChildren()) {
-					if(node instanceof HBox) {
-						for(Node innerNode: ((HBox) node).getChildren()) {
-							if(innerNode instanceof TextField) {
-								((TextField) innerNode).editableProperty().bindBidirectional(controller.MyController.btnEdit.selectedProperty());
-								if(controller.MyController.btnEdit.isSelected()) {
-									innerNode.getStyleClass().remove("popover-form-textfield-inactive");
-									innerNode.getStyleClass().add("popover-form-textfield-active");
-								}
-								
-								if(!controller.MyController.btnEdit.isSelected()) {
-									innerNode.getStyleClass().remove("popover-form-textfield-active");
-									innerNode.getStyleClass().add("popover-form-textfield-inactive");
-								}
-							}
-						}
-					}
-				}
-			}
-		});
+
 	}
 }
