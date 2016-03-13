@@ -1,10 +1,10 @@
 package application;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.controlsfx.control.PopOver;
 
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -12,16 +12,18 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Graphics {
-	public static Node createHUBNode(HUB hubObject) {
+	private static Node createHUBNode(HUB hubObject, Pane canvas) {
 		//each hub is represented by a blue rectangle
 		Rectangle node = new Rectangle(Data.nodeLength,Data.nodeWidth);
 		node.setFill(Color.BLUE);
@@ -38,7 +40,7 @@ public class Graphics {
 		nodeContainer.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				PopOver popOver = new PopOver(createHUBPopOverContent(hubObject));
+				PopOver popOver = new PopOver(createHUBPopOverContent(hubObject, canvas));
 				popOver.setDetachable(false);
 				popOver.show(nodeContainer);
 			}
@@ -48,7 +50,7 @@ public class Graphics {
 		return nodeContainer;
 	}
 	
-	public static Node createVMNode(VM vmObject) {
+	private static Node createVMNode(VM vmObject, Pane canvas) {
 		//each vm is represented by a red rectangle
 		Rectangle node = new Rectangle(Data.nodeLength,Data.nodeWidth);
 		node.setFill(Color.RED);
@@ -65,7 +67,7 @@ public class Graphics {
 		nodeContainer.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				PopOver popOver = new PopOver(createVMPopOverContent(vmObject));
+				PopOver popOver = new PopOver(createVMPopOverContent(vmObject, canvas));
 				popOver.setDetachable(false);
 				popOver.show(nodeContainer);
 			}			
@@ -96,12 +98,45 @@ public class Graphics {
 		content.getChildren().add(headerRow);
 	}
 	
-	private static void btnListener(VBox content){
+	public static void draw(Pane canvas) {
+		System.out.println("Number of Vm's Present "+application.Data.vmMap.keySet().size());
+		System.out.println("Number of Hub's Present "+application.Data.hubMap.keySet().size());
+		// the pane should be cleared each time
+		canvas.getChildren().clear();
+		
+		// we don't actually want to change the value of Data.hubStartPosY
+		// instead we initially set our tempPosY to the startPos and alter that
+		int tempPosY = Data.hubStartPosY;
+		//Draw a Blue rectangle for each hub
+		for(Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
+			String currentHubName = entry.getKey();
+			HUB currentHub = application.Data.hubMap.get(currentHubName);
+			currentHub.setPosX(Data.hubStartPosX);
+			currentHub.setPosY(tempPosY);
+			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas));
+			tempPosY += 150;
+		}
+		
+		// we don't actually want to change the value of Data.vmStartPosY either
+		tempPosY = Data.vmStartPosY;
+		//Draw a Red rectangle for each vm
+		for(Map.Entry<String, VM> entry : application.Data.vmMap.entrySet()) {
+			String currentVMName = entry.getKey();
+			VM currentVM = application.Data.vmMap.get(currentVMName);
+			currentVM.setPosX(Data.vmStartPosX);
+			currentVM.setPosY(tempPosY);
+			canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas));
+			tempPosY += 150;
+		}
+	}
+	
+	private static void btnListener(VBox content, Optional<HUB> hubObject, Optional<VM> vmObject, Pane canvas){
 		//Add ability to go into edit mode for the Textfield
 		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				//Query the popover setup schema to eventually find the Textfields and set the editable property based off the btnEdit
+				int count = 0;
 				for(Node node: content.getChildren()) {
 					if(node instanceof HBox) {
 						for(Node innerNode: ((HBox) node).getChildren()) {
@@ -111,10 +146,36 @@ public class Graphics {
 									innerNode.getStyleClass().remove("popover-form-textfield-inactive");
 									innerNode.getStyleClass().add("popover-form-textfield-active");
 								}
-								
 								if(!controller.MyController.btnEdit.isSelected()) {
 									innerNode.getStyleClass().remove("popover-form-textfield-active");
 									innerNode.getStyleClass().add("popover-form-textfield-inactive");
+									if (hubObject.isPresent()){
+										if (count == 0){
+											hubObject.get().setName(((TextInputControl) innerNode).getText());
+										} else if (count == 1){
+											hubObject.get().setSubnet(((TextInputControl) innerNode).getText());
+										} else if (count ==2){
+											hubObject.get().setNetmask(((TextInputControl) innerNode).getText());
+										} else {
+											System.out.println("inf"+((TextInputControl) innerNode).getText());
+										}
+										draw(canvas);
+							
+									} else if (vmObject.isPresent()){
+										if (count == 0){
+											vmObject.get().setName(((TextInputControl) innerNode).getText());
+										} else if (count == 1){
+											vmObject.get().setOs(((TextInputControl) innerNode).getText());
+										} else if (count ==2){
+											vmObject.get().setVer(Double.parseDouble(((TextInputControl) innerNode).getText()));
+										} else if (count==3){
+											vmObject.get().setSrc(((TextInputControl) innerNode).getText());
+										} else {
+											System.out.println("inf"+((TextInputControl) innerNode).getText());
+										}
+										draw(canvas);
+									}
+									count++;
 								}
 							}
 						}
@@ -124,7 +185,7 @@ public class Graphics {
 		});
 	}
 	
-	public static VBox createHUBPopOverContent(HUB hubObject) {		
+	private static VBox createHUBPopOverContent(HUB hubObject, Pane canvas) {		
 		//this content container is everything that is going to go on the PopOver
 		VBox content = new VBox(5);
 		content.getStyleClass().add("popover-content");
@@ -158,11 +219,11 @@ public class Graphics {
 			}
 			count++;
 		}
-		btnListener(content);
+		btnListener(content, Optional.of(hubObject), Optional.empty(), canvas);
 		return content;
 	}
 	
-	public static VBox createVMPopOverContent(VM vmObject) {
+	private static VBox createVMPopOverContent(VM vmObject, Pane canvas) {
 		//this content container is everything that is going to go on the PopOver
 		VBox content = new VBox(5);
 		content.getStyleClass().add("popover-content");
@@ -193,7 +254,7 @@ public class Graphics {
 
 			addRow(key, value, 15, content);
 		}
-		btnListener(content);
+		btnListener(content,Optional.empty(),Optional.of(vmObject), canvas);
 		return content;
 	}
 

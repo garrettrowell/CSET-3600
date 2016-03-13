@@ -1,6 +1,7 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HUB {
 	private String subnet;
@@ -34,6 +35,10 @@ public class HUB {
 	}
 
 	public ArrayList<String> getInf() {
+		return inf;
+	}
+	public List<String> compareInfs(List<String> list1, List<String> list2){
+		
 		return inf;
 	}
 

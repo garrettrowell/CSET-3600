@@ -16,10 +16,10 @@ public class Data {
 	//Coordinates for node positions and size
 	public static int nodeLength = 100;
 	public static int nodeWidth = 100;
-	public static int hubPosX = 50;
-	public static int hubPosY = 50;
-	public static int vmPosX = 200;
-	public static int vmPosY = 50;
+	public static int hubStartPosX = 50;
+	public static int hubStartPosY = 50;
+	public static int vmStartPosX = 200;
+	public static int vmStartPosY = 50;
 	// Hash maps containing vm's and hubs
 	public static LinkedHashMap<String, VM> vmMap = new LinkedHashMap<String, VM>();
 	public static LinkedHashMap<String, HUB> hubMap = new LinkedHashMap<String, HUB>();
