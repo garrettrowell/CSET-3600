@@ -23,19 +23,18 @@
 
 .popover-form-textfield-inactive{
 	-fx-min-width: 12px;
-	-fx-control-inner-background: #808080;
+	-fx-control-inner-background: grey;
+	-fx-text-fill: black;
+	-fx-highlight-fill: dodgerblue;
+	-fx-background-color: grey;
+	-fx-highlight-text-fill: black;
 }
 
 .popover-form-textfield-active{
 	-fx-min-width: 12px;
 	-fx-control-inner-background: white;
-}
--fx-text-inner-color{
-	
-}
--fx-text-inner-color{
-	
-}
--fx-text-box-border{
-	
+	-fx-text-fill: black;
+	-fx-highlight-fill: dodgerblue;
+	-fx-background-color: white;
+	-fx-highlight-text-fill: black;
 }
