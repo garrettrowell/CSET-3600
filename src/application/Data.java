@@ -12,8 +12,8 @@ public class Data {
 	static final String subnetPattern = "subnet\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
 	static final String netmaskPattern = "netmask\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
 	static final String infPattern = "inf\\s?:\\s?(.*)";
-	
-	//Coordinates for node positions and size
+
+	// Coordinates for node positions and size
 	public static int nodeLength = 100;
 	public static int nodeWidth = 100;
 	public static int hubStartPosX = 50;

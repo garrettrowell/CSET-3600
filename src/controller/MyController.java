@@ -24,15 +24,14 @@ public class MyController implements Initializable {
 	AnchorPane anchorPane;
 	@FXML
 	ScrollPane scrollPane;
-	
-	//These are the toggle button and the VBox container for the form
+
+	// These are the toggle button and the VBox container for the form
 	public static ToggleButton btnEdit = new ToggleButton("Edit");
-	
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-	
+
 	}
-	
 
 	@FXML
 	private void fileClose() {
@@ -59,7 +58,7 @@ public class MyController implements Initializable {
 	private void fileSave() {
 
 	}
-	
+
 	@FXML
 	private void tabChange() {
 		application.Graphics.draw(canvas);

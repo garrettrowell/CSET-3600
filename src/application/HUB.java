@@ -1,14 +1,13 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeSet;
 
 public class HUB {
 	private String subnet;
 	private String netmask;
 	private String name;
 	private int posX, posY;
-	private ArrayList<String> inf = new ArrayList<String>();
+	private TreeSet<String> inf = new TreeSet<String>();
 	
 	public String getName() {
 		return name;
@@ -34,15 +33,15 @@ public class HUB {
 		this.netmask = netmask;
 	}
 
-	public ArrayList<String> getInf() {
-		return inf;
-	}
-	public List<String> compareInfs(List<String> list1, List<String> list2){
-		
+	public TreeSet<String> getInfs() {
 		return inf;
 	}
 
-	public void setInf(String input) {
+	public void setInfs(TreeSet<String> input) {
+		this.inf = input;
+	}
+
+	public void addInf(String input) {
 		inf.add(input);
 	}
 
