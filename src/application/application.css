@@ -38,3 +38,13 @@
 	-fx-background-color: white;
 	-fx-highlight-text-fill: black;
 }
+
+.toggle-button{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+}
+.toggle-button:hover{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+	-fx-effect: dropshadow( three-pass-box , dodgerblue , 5, 0.0 , 0 , 1 );
+}

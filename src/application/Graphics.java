@@ -1,22 +1,13 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import org.controlsfx.control.PopOver;
-
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -141,80 +132,6 @@ public class Graphics {
 		}
 	}
 
-	private static void btnListener(VBox content, Optional<HUB> hubObject, Optional<VM> vmObject, Pane canvas) {
-		// Add ability to go into edit mode for the Textfield
-		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				// Query the popover setup schema to eventually find the
-				// Textfields and set the editable property based off the
-				// btnEdit
-
-				// inf is used for hubs
-				TreeSet<String> inf = new TreeSet<String>();
-				// interfaces is used for vm's
-				TreeMap<String, String> interfaces = new TreeMap<String, String>();
-
-				int count = 0;
-				for (Node node : content.getChildren()) {
-					if (node instanceof HBox) {
-						for (Node innerNode : ((HBox) node).getChildren()) {
-							if (innerNode instanceof TextField) {
-								((TextField) innerNode).editableProperty()
-										.bindBidirectional(controller.MyController.btnEdit.selectedProperty());
-								if (controller.MyController.btnEdit.isSelected()) {
-									innerNode.getStyleClass().remove("popover-form-textfield-inactive");
-									innerNode.getStyleClass().add("popover-form-textfield-active");
-								}
-								if (!controller.MyController.btnEdit.isSelected()) {
-									innerNode.getStyleClass().remove("popover-form-textfield-active");
-									innerNode.getStyleClass().add("popover-form-textfield-inactive");
-									if (hubObject.isPresent()) {
-										if (count == 0) {
-											hubObject.get().setName(((TextField) innerNode).getText());
-										} else if (count == 1) {
-											hubObject.get().setSubnet(((TextField) innerNode).getText());
-										} else if (count == 2) {
-											hubObject.get().setNetmask(((TextField) innerNode).getText());
-										} else {
-											inf.add(((TextField) innerNode).getText());
-											// System.out.println("inf" +
-											// ((TextField)
-											// innerNode).getText());
-										}
-										draw(canvas);
-
-									} else if (vmObject.isPresent()) {
-										if (count == 0) {
-											vmObject.get().setName(((TextField) innerNode).getText());
-										} else if (count == 1) {
-											vmObject.get().setOs(((TextField) innerNode).getText());
-										} else if (count == 2) {
-											vmObject.get()
-													.setVer(Double.parseDouble(((TextField) innerNode).getText()));
-										} else if (count == 3) {
-											vmObject.get().setSrc(((TextField) innerNode).getText());
-										} else {
-											// vmObject.get().setInterfaces(key,
-											// value);
-											// interfaces.put(key, value)
-											System.out.println("inf" + ((TextField) innerNode).getText());
-										}
-										draw(canvas);
-									}
-									count++;
-									if (hubObject.isPresent()) {
-										hubObject.get().setInfs(inf);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-	}
-
 	private static void vmBtnListener(VBox content, VM vmObject, Pane canvas) {
 		// Add ability to go into edit mode for the Textfield
 		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -271,6 +188,58 @@ public class Graphics {
 		});
 	}
 
+	private static void hubBtnListener(VBox content, HUB hubObject, Pane canvas) {
+		// Add ability to go into edit mode for the Textfield
+		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				// Query the popover setup schema to eventually find the
+				// Textfields and set the editable property based off the
+				// btnEdit
+
+				// inf is used to update the hub's interfaces
+				TreeSet<String> inf = new TreeSet<String>();
+				for (Node node : content.getChildren()) {
+					// System.out.println(node);
+					if (node instanceof HBox) {
+
+						ObservableList<Node> childNode = ((HBox) node).getChildren();
+						for (int i = 0; i < childNode.size(); i++) {
+							if (childNode.get(i) instanceof TextField) {
+								((TextField) childNode.get(i)).editableProperty()
+										.bindBidirectional(controller.MyController.btnEdit.selectedProperty());
+								if (controller.MyController.btnEdit.isSelected()) {
+									System.out.println("Edit Mode");
+									((TextField) childNode.get(i)).getStyleClass()
+											.remove("popover-form-textfield-inactive");
+									((TextField) childNode.get(i)).getStyleClass().add("popover-form-textfield-active");
+								} else if (!controller.MyController.btnEdit.isSelected()) {
+									((TextField) childNode.get(i)).getStyleClass()
+											.remove("popover-form-textfield-active");
+									((TextField) childNode.get(i)).getStyleClass()
+											.add("popover-form-textfield-inactive");
+									if (childNode.get(i - 1) instanceof Label) {
+										if (((Label) childNode.get(i - 1)).getText().matches("Name.*")) {
+											hubObject.setName(((TextField) childNode.get(i)).getText());
+										} else if (((Label) childNode.get(i - 1)).getText().matches("Subnet.*")) {
+											hubObject.setSubnet(((TextField) childNode.get(i)).getText());
+										} else if (((Label) childNode.get(i - 1)).getText().matches("Ver.*")) {
+											hubObject.setSubnet(((TextField) childNode.get(i)).getText());
+										} else if (((Label) childNode.get(i - 1)).getText().matches("Inf.*")) {
+											inf.add(((TextField) childNode.get(i)).getText());
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				hubObject.setInfs(inf);
+				draw(canvas);
+			}
+		});
+	}
+
 	private static VBox createHUBPopOverContent(HUB hubObject, Pane canvas) {
 		// this content container is everything that is going to go on the
 		// PopOver
@@ -296,18 +265,11 @@ public class Graphics {
 
 		// this will dynamically add rows to the formPane base on the # of inf
 		// entries
-		int count = 0;
 		for (String inf : hubObject.getInfs()) {
-			if (count == 0 & hubObject.getInfs().size() > 1) {
-				addRow("Infs:", inf, 15, content);
-			} else if (count == 0 & hubObject.getInfs().size() == 1) {
-				addRow("Inf:", inf, 15, content);
-			} else {
-				addRow("", inf, 15, content);
-			}
-			count++;
+			addRow("Inf:", inf, 15, content);
+
 		}
-		btnListener(content, Optional.of(hubObject), Optional.empty(), canvas);
+		hubBtnListener(content, hubObject, canvas);
 		return content;
 	}
 
@@ -344,9 +306,6 @@ public class Graphics {
 			addRow(key, value, 15, content);
 		}
 		vmBtnListener(content, vmObject, canvas);
-		// btnListener(content, Optional.empty(), Optional.of(vmObject),
-		// canvas);
 		return content;
 	}
-
 }
