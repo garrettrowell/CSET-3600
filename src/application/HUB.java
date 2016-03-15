@@ -1,14 +1,14 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.TreeSet;
 
 public class HUB {
 	private String subnet;
 	private String netmask;
 	private String name;
-	private ArrayList<String> inf = new ArrayList<String>();
-
+	private int posX, posY;
+	private TreeSet<String> inf = new TreeSet<String>();
+	
 	public String getName() {
 		return name;
 	}
@@ -33,16 +33,31 @@ public class HUB {
 		this.netmask = netmask;
 	}
 
-	public void getInf() {
-		// Simply iterates through the array list of interfaces
-		// and prints each out to the console
-		System.out.println("Inf(s):");
-		for (int i = 0; i < inf.size(); i++) {
-			System.out.println("\t" + inf.get(i));
-		}
+	public TreeSet<String> getInfs() {
+		return inf;
 	}
 
-	public void setInf(String input) {
+	public void setInfs(TreeSet<String> input) {
+		this.inf = input;
+	}
+
+	public void addInf(String input) {
 		inf.add(input);
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
 	}
 }

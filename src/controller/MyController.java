@@ -6,18 +6,32 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 public class MyController implements Initializable {
+	@FXML
+	TextArea textEditor;
+	@FXML
+	TabPane tabPane;
+	@FXML
+	Pane canvas;
+	@FXML
+	AnchorPane anchorPane;
+	@FXML
+	ScrollPane scrollPane;
+
+	// These are the toggle button and the VBox container for the form
+	public static ToggleButton btnEdit = new ToggleButton("Edit");
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
 
 	}
-
-	@FXML
-	TextArea textEditor;
 
 	@FXML
 	private void fileClose() {
@@ -43,5 +57,10 @@ public class MyController implements Initializable {
 	@FXML
 	private void fileSave() {
 
+	}
+
+	@FXML
+	private void tabChange() {
+		application.Graphics.draw(canvas);
 	}
 }

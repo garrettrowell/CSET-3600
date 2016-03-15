@@ -1,14 +1,14 @@
 package application;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.TreeMap;
 
 public class VM {
 	private String name;
 	private String os;
 	private String src;
 	private Double ver;
-	private HashMap<String, String> interfaces = new HashMap<String, String>();
+	private int posX, posY;
+	private TreeMap<String, String> interfaces = new TreeMap<String, String>();
 
 	public String getName() {
 		return name;
@@ -42,19 +42,32 @@ public class VM {
 		this.os = os;
 	}
 
-	public void getInterfaces() {
-		// iterates through the interface hash map and prints each combination
-		// of keys and values to the command line. Ex: eth0 192.168.0.1
-		System.out.println("Interface(s):");
-		for (Map.Entry<String, String> entry : interfaces.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			System.out.println("\t" + key + " " + value);
-		}
+	public TreeMap<String, String> getInterfaces() {
+		return this.interfaces;
 	}
 
-	public void setInterfaces(String key, String value) {
-		interfaces.put(key, value);
+	public void setInterfaces(TreeMap<String, String> interfaces) {
+		this.interfaces = interfaces;
+	}
+
+	public void addInterface(String key, String value) {
+		this.interfaces.put(key, value);
+	}
+
+	public int getPosY() {
+		return this.posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getPosX() {
+		return this.posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
 	}
 
 }

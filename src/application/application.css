@@ -1,1 +1,50 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.popover-content{
+	-fx-padding: 10px;
+}
+
+.popover-label{
+	-fx-font-size: 25px;
+	-fx-font-family: 'serif';
+}
+
+.popover-seperator{
+	
+}
+
+.popover-form{
+	-fx-hgap: 15px;
+	-fx-vgap: 15px;
+}
+
+.popover-form-label{
+	-fx-font-size: 15px;
+	-fx-min-width: 75px;	
+}
+
+.popover-form-textfield-inactive{
+	-fx-min-width: 12px;
+	-fx-control-inner-background: grey;
+	-fx-text-fill: black;
+	-fx-highlight-fill: dodgerblue;
+	-fx-background-color: grey;
+	-fx-highlight-text-fill: black;
+}
+
+.popover-form-textfield-active{
+	-fx-min-width: 12px;
+	-fx-control-inner-background: white;
+	-fx-text-fill: black;
+	-fx-highlight-fill: dodgerblue;
+	-fx-background-color: white;
+	-fx-highlight-text-fill: black;
+}
+
+.toggle-button{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+}
+.toggle-button:hover{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+	-fx-effect: dropshadow( three-pass-box , dodgerblue , 5, 0.0 , 0 , 1 );
+}

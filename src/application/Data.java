@@ -1,6 +1,6 @@
 package application;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Data {
 	// Regex used to parse various patterns of the config file
@@ -13,7 +13,14 @@ public class Data {
 	static final String netmaskPattern = "netmask\\s?:\\s?\"((?:\\d{0,3}\\.?)+)\"";
 	static final String infPattern = "inf\\s?:\\s?(.*)";
 
+	// Coordinates for node positions and size
+	public static int nodeLength = 100;
+	public static int nodeWidth = 100;
+	public static int hubStartPosX = 50;
+	public static int hubStartPosY = 50;
+	public static int vmStartPosX = 200;
+	public static int vmStartPosY = 50;
 	// Hash maps containing vm's and hubs
-	static HashMap<String, VM> vmMap = new HashMap<String, VM>();
-	static HashMap<String, HUB> hubMap = new HashMap<String, HUB>();
+	public static LinkedHashMap<String, VM> vmMap = new LinkedHashMap<String, VM>();
+	public static LinkedHashMap<String, HUB> hubMap = new LinkedHashMap<String, HUB>();
 }
