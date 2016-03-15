@@ -52,7 +52,6 @@ public class VM {
 
 	public void addInterface(String key, String value) {
 		this.interfaces.put(key, value);
-
 	}
 
 	public int getPosY() {
