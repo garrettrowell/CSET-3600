@@ -308,4 +308,15 @@ public class Graphics {
 		vmBtnListener(content, vmObject, canvas);
 		return content;
 	}
+	
+	//this one is used for adding rows in the Insert New VM Form
+	public static void addInfRow(String labelText, VBox content) {
+		HBox formRow = new HBox();
+		formRow.getStyleClass().add("vmform-infRow");
+		Label rowLabel = new Label(labelText);
+		rowLabel.getStyleClass().add("vmform-label");
+		TextField rowTF = new TextField();
+		formRow.getChildren().addAll(rowLabel, rowTF);
+		content.getChildren().add(formRow);
+	}
 }
