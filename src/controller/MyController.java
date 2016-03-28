@@ -2,19 +2,22 @@ package controller;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
-import application.HUB;
-import application.VM;
-import application.Data;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MyController implements Initializable {
 	@FXML
@@ -25,15 +28,16 @@ public class MyController implements Initializable {
 	Pane canvas;
 	@FXML
 	AnchorPane anchorPane;
-	
-	//These are the toggle button and the VBox container for the form
+	@FXML
+	ScrollPane scrollPane;
+
+	// These are the toggle button and the VBox container for the form
 	public static ToggleButton btnEdit = new ToggleButton("Edit");
-	
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-	
+
 	}
-	
 
 	@FXML
 	private void fileClose() {
@@ -60,53 +64,51 @@ public class MyController implements Initializable {
 	private void fileSave() {
 
 	}
+
+	@FXML
+	private void tabChange() {
+		application.Graphics.draw(canvas);
+	}
 	
 	@FXML
-	private void drawGraphical() {
-		System.out.println("Number of Vm's Present "+application.Data.vmMap.keySet().size());
-		System.out.println("Number of Hub's Present "+application.Data.hubMap.keySet().size());
-		
-		//Draw every hub
-		for(Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
-			String currentHubName = entry.getKey();
-			HUB currentHub = application.Data.hubMap.get(currentHubName);
-			currentHub.setPosX(Data.xPos);
-			currentHub.setPosY(Data.yPos);
-			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub));
-			Data.xPos += 150;
+	private void insertNewHub(){
+		try{
+			Parent root = FXMLLoader.load(getClass().getResource("/application/insertnewhubform.fxml"));
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
+			Stage formWindow = new Stage();
+			formWindow.setScene(scene);
+			formWindow.setTitle("Insert New Hub");
+			formWindow.setResizable(false);
+			formWindow.setFullScreen(false);
 			
-			//Using the con arraylist in the HUB object as reference, draw the VM after each hub
-			for(String vmName : currentHub.getCon()) {
-				VM vmObject = application.Data.vmMap.get(vmName);
-				vmObject.setPosX(Data.xPos);
-				vmObject.setPosY(Data.yPos);
-				canvas.getChildren().add(application.Graphics.createVMNode(vmObject));
-				Data.yPos += 150;
-			}
-			Data.xPos += 150;
-			Data.yPos = 50;
+			//prevent the user from switching to the main GUI without closing the insert form first
+			formWindow.initModality(Modality.WINDOW_MODAL);
+			formWindow.initOwner(scrollPane.getScene().getWindow());
+			formWindow.showAndWait();
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		
-		/*
-		//Draw a Blue rectangle for each hub
-		for(Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
-			String currentHubName = entry.getKey();
-			HUB currentHub = application.Data.hubMap.get(currentHubName);
-			currentHub.setPosX(Data.hubPosX);
-			currentHub.setPosY(Data.hubPosY);
-			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub));
-			Data.hubPosY += 150;
+	}
+	
+	@FXML
+	private void insertNewVm(){
+		try{
+			Parent root = FXMLLoader.load(getClass().getResource("/application/insertnewvmform.fxml"));
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
+			Stage formWindow = new Stage();
+			formWindow.setTitle("Insert New Vm");
+			formWindow.setScene(scene);
+			formWindow.setFullScreen(false);
+			formWindow.setResizable(false);
+			
+			//prevent the user from switching to the main GUI without closing the insert form first
+			formWindow.initModality(Modality.WINDOW_MODAL);
+			formWindow.initOwner(scrollPane.getScene().getWindow());
+			formWindow.showAndWait();
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		
-		//Draw a Red rectangle for each vm
-		for(Map.Entry<String, VM> entry : application.Data.vmMap.entrySet()) {
-			String currentVMName = entry.getKey();
-			VM currentVM = application.Data.vmMap.get(currentVMName);
-			currentVM.setPosX(Data.vmPosX);
-			currentVM.setPosY(Data.vmPosY);
-			canvas.getChildren().add(application.Graphics.createVMNode(currentVM));
-			Data.vmPosY += 150;
-		}
-		*/
 	}
 }

@@ -1,7 +1,8 @@
 package application;
 
 import java.io.File;
-import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,13 +24,15 @@ public class FileParser {
 		// Populates the specified vm's interfaces hash map
 		Pattern patt = Pattern.compile(regex);
 		Matcher match = patt.matcher(input);
+		TreeMap<String, String> interfaces = new TreeMap<String, String>();
 		while (true) {
 			if (match.find()) {
-				Data.vmMap.get(vm).setInterfaces(match.group(1), match.group(2));
+				interfaces.put(match.group(1), match.group(2));
 			} else {
 				break;
 			}
 		}
+		Data.vmMap.get(vm).setInterfaces(interfaces);
 	}
 
 	public void infMatcher(String hub, String regex, String input) {
@@ -43,7 +46,7 @@ public class FileParser {
 			Matcher innerMatch = innerPatt.matcher(lineMatch.group(1));
 			while (true) {
 				if (innerMatch.find()) {
-					Data.hubMap.get(hub).setInf(innerMatch.group(1));
+					Data.hubMap.get(hub).addInf(innerMatch.group(1));
 				} else {
 					break;
 				}
@@ -88,9 +91,12 @@ public class FileParser {
 					// Prints out parsed data to cli for debugging purposes
 					System.out.println("Found vm:");
 					System.out.println("name\t=\t" + Data.vmMap.get(match.group(2)).getName());
-					System.out.println("os\t=\t"+Data.vmMap.get(match.group(2)).getOs());
-					System.out.println("ver\t=\t"+Data.vmMap.get(match.group(2)).getVer());
-					System.out.println("src\t=\t"+Data.vmMap.get(match.group(2)).getSrc());
+					System.out.println("os\t=\t" + Data.vmMap.get(match.group(2)).getOs());
+					System.out.println("ver\t=\t" + Data.vmMap.get(match.group(2)).getVer());
+					System.out.println("src\t=\t" + Data.vmMap.get(match.group(2)).getSrc());
+					for (Map.Entry<String, String> entry : Data.vmMap.get(match.group(2)).getInterfaces().entrySet()) {
+						System.out.println(entry.getKey() + "\t=\t" + entry.getKey());
+					}
 					Data.vmMap.get(match.group(2)).getInterfaces();
 					System.out.println("---------------------------------");
 				} else if (match.group(1).equals("hub")) {
@@ -109,11 +115,11 @@ public class FileParser {
 					// Prints out parsed data to cli for debugging purposes
 					System.out.println("Found hub:");
 					System.out.println("name\t=\t" + Data.hubMap.get(match.group(2)).getName());
-					System.out.println("subnet\t=\t"+Data.hubMap.get(match.group(2)).getSubnet());
-					System.out.println("netmask\t=\t"+Data.hubMap.get(match.group(2)).getNetmask());
+					System.out.println("subnet\t=\t" + Data.hubMap.get(match.group(2)).getSubnet());
+					System.out.println("netmask\t=\t" + Data.hubMap.get(match.group(2)).getNetmask());
 					System.out.println("inf(s)\t=\t");
-					for (String inf : Data.hubMap.get(match.group(2)).getInf()){
-						System.out.println("\t\t"+inf);
+					for (String inf : Data.hubMap.get(match.group(2)).getInfs()) {
+						System.out.println("\t\t" + inf);
 					}
 					System.out.println("---------------------------------");
 				}
@@ -122,7 +128,5 @@ public class FileParser {
 				break;
 			}
 		}
-		//sort the connections
-		Data.sortConnections();
 	}
 }
