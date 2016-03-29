@@ -7,22 +7,28 @@ import java.util.regex.Pattern;
 public class Validator {
 	//make sure name is not use in either hub or vm
 	public static boolean validateName(String name) {
-		boolean valid = true;
-		//check every hub
-		for(Map.Entry<String, HUB> hubEntry : application.Data.hubMap.entrySet()) {
-			HUB currentHub = hubEntry.getValue();
-			if(currentHub.getName().toLowerCase().equals(name.trim().toLowerCase())) {
-				valid = false;
+		boolean validName = true;
+		try {
+			//check every hub
+			for(Map.Entry<String, HUB> hubEntry : application.Data.hubMap.entrySet()) {
+				HUB currentHub = hubEntry.getValue();
+				if(currentHub.getName().toLowerCase().equals(name.trim().toLowerCase())) {
+					validName = false;
+				}
 			}
-		}
-		//check every vm
-		for(Map.Entry<String, VM> vmEntry : application.Data.vmMap.entrySet()) {
-			VM currentVM = vmEntry.getValue();
-			if(currentVM.getName().toLowerCase().equals(name.trim().toLowerCase())) {
-				valid = false;
+			//check every vm
+			for(Map.Entry<String, VM> vmEntry : application.Data.vmMap.entrySet()) {
+				VM currentVM = vmEntry.getValue();
+				if(currentVM.getName().toLowerCase().equals(name.trim().toLowerCase())) {
+					validName = false;
+				}
 			}
+		}catch(IllegalArgumentException e) {
+			System.out.println("Please enter a String");
+			validName = false;
 		}
-		return valid;
+		
+		return validName;
 	}
 	//make sure ip is not taken also make sure its in the range of 255.255.255.255
 	public static boolean validateIp(String ip) {
@@ -89,6 +95,6 @@ public class Validator {
 		}else {
 			valid = true;
 		}
-		return true;
+		return valid;
 	}
 }
