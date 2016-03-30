@@ -52,23 +52,18 @@ public class vmTest {
 	}
 	
 	@Test
-	public void vmSetInfTest() {
-		assertEquals(inf, vmObject.getInterfaces());
-	}
-	
-	@Test
 	public void vmAddInfTest() {
 		vmObject.addInterface("eth3", "192.168.3.6");
 		assertEquals("192.168.3.6", vmObject.getInterfaces().get("eth3"));
 	}
 	
 	@Test
-	public void vmSetYTest() {
+	public void vmGetYTest() {
 		assertEquals(5, vmObject.getPosY());
 	}
 	
 	@Test
-	public void vmSetXTest() {
+	public void vmGetXTest() {
 		assertEquals(5, vmObject.getPosX());
 	}
 }
