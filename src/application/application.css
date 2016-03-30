@@ -24,7 +24,7 @@
 .popover-form-textfield-inactive{
 	-fx-min-width: 12px;
 	-fx-control-inner-background: grey;
-	-fx-text-fill: black;
+	-fx-font: black;
 	-fx-highlight-fill: dodgerblue;
 	-fx-background-color: grey;
 	-fx-highlight-text-fill: black;
@@ -37,6 +37,23 @@
 	-fx-highlight-fill: dodgerblue;
 	-fx-background-color: white;
 	-fx-highlight-text-fill: black;
+}
+
+.popover-form-buttonRow{
+	-fx-alignment: bottom-right;	
+}
+
+.popover-form-button-enable{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+	-fx-pref-width: 100px;
+	-fx-pref-height: 25px;	
+}
+
+.popover-form-button-enable:hover{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+	-fx-effect: dropshadow( three-pass-box , dodgerblue , 5, 0.0 , 0 , 1 );	
 }
 
 .toggle-button{

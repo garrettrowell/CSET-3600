@@ -3,6 +3,8 @@ package application;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.controlsfx.control.PopOver;
 
@@ -10,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -86,7 +89,7 @@ public class Graphics {
 		return nodeContainer;
 	}
 
-	private static void addRow(String labelText, String textFormText, Integer size, VBox content) {
+	private static void addRow(String labelText, String textFormText, Integer size, VBox content, boolean addToEnd) {
 		HBox formRow = new HBox(size);
 		formRow.getStyleClass().add("popover-form");
 		Label rowLabel = new Label(labelText);
@@ -95,8 +98,15 @@ public class Graphics {
 		rowTF.getStyleClass().add("popover-form-textfield-inactive");
 		rowTF.setText(textFormText);
 		rowTF.setEditable(false);
-		formRow.getChildren().addAll(rowLabel, rowTF);
-		content.getChildren().add(formRow);
+		
+		//do you just add it to the form for befor the row with the button
+		if(addToEnd){
+			formRow.getChildren().addAll(rowLabel,rowTF);
+			content.getChildren().add(content.getChildren().size() - 1,formRow);
+		}else{
+			formRow.getChildren().addAll(rowLabel, rowTF);
+			content.getChildren().add(formRow);
+		}
 	}
 
 	private static void addHeader(String labelText, ToggleButton btn, Integer size, VBox content) {
@@ -187,6 +197,11 @@ public class Graphics {
 										}
 									}
 								}
+								
+								if(childNode.get(i) instanceof Button) {
+									((Button) childNode.get(i)).disableProperty()
+										.bindBidirectional(controller.MyController.btnEdit.selectedProperty());
+								}
 							}
 						}
 					}
@@ -249,7 +264,34 @@ public class Graphics {
 			}
 		});
 	}
-
+	
+	private static void addInterfacesPopoverBtnListener(VBox content) {
+		//btn listener for the "Add Interfaces" button on the popovers
+		ObservableList<Node> popOverContent = content.getChildren();
+		String ethRegex = "(\\w+?)(\\d+?.*)";
+		Pattern pattern = Pattern.compile(ethRegex);
+		int nextInterfaceLabel = 0;
+		//determine what is the index tagged at the last eht# on the form
+		for(Node node : popOverContent) {
+			if(node instanceof HBox){
+				for(Node innerNode : ((HBox) node).getChildren()){
+					if( innerNode instanceof Label) {
+						String nodeLabel = ((Label)innerNode).getText();
+						if(nodeLabel.matches(ethRegex)) {
+							Matcher matcher = pattern.matcher(nodeLabel);
+							if(matcher.find()) {
+								nextInterfaceLabel = Integer.parseInt(matcher.group(2)) + 1;
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		addRow("eth" + String.valueOf(nextInterfaceLabel) , "", 15, content, true);
+		
+	}
+	
 	private static VBox createHUBPopOverContent(HUB hubObject, Pane canvas) {
 		// this content container is everything that is going to go on the
 		// PopOver
@@ -265,18 +307,18 @@ public class Graphics {
 		content.getChildren().add(hr);
 
 		// the first row of the form (Hub name)
-		addRow("Name: ", hubObject.getName(), 15, content);
+		addRow("Name: ", hubObject.getName(), 15, content, false);
 
 		// Here is the same layout as row 1 (Hub subnet)
-		addRow("Subnet:", hubObject.getSubnet(), 15, content);
+		addRow("Subnet:", hubObject.getSubnet(), 15, content, false);
 
 		// Row 3 (Hub netmask)
-		addRow("Netmask:", hubObject.getNetmask(), 15, content);
+		addRow("Netmask:", hubObject.getNetmask(), 15, content, false);
 
 		// this will dynamically add rows to the formPane base on the # of inf
 		// entries
 		for (String inf : hubObject.getInfs()) {
-			addRow("Inf:", inf, 15, content);
+			addRow("Inf:", inf, 15, content, false);
 
 		}
 		hubBtnListener(content, hubObject, canvas);
@@ -299,28 +341,48 @@ public class Graphics {
 
 		// the first row of the form (VM name)
 		// each row of the form contains a label and a Textfield
-		addRow("Name: ", vmObject.getName(), 15, content);
+		addRow("Name: ", vmObject.getName(), 15, content, false);
 
-		addRow("OS:", vmObject.getOs(), 15, content);
+		addRow("OS:", vmObject.getOs(), 15, content, false);
 
 		// Row 3 (VM ver)
-		addRow("Ver:", vmObject.getVer().toString(), 15, content);
+		addRow("Ver:", vmObject.getVer().toString(), 15, content, false);
 
 		// Row 4 (VM src)
-		addRow("Src:", vmObject.getSrc(), 15, content);
+		addRow("Src:", vmObject.getSrc(), 15, content, false);
 
 		for (Map.Entry<String, String> entry : vmObject.getInterfaces().entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
 
-			addRow(key, value, 15, content);
+			addRow(key, value, 15, content, false);
 		}
 		vmBtnListener(content, vmObject, canvas);
+		addButtonRow("Add Interfaces", content);
 		return content;
 	}
+
+	private static void addButtonRow(String btnLabel, VBox content) {
+		//add a row with a button to popovers
+		HBox btnRow = new HBox();
+		btnRow.setId("btnRow");
+		btnRow.getStyleClass().add("popover-form-buttonRow");
+		Button button = new Button(btnLabel);
+		button.getStyleClass().add("popover-form-button-enable");
+		button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if(event.getButton() == MouseButton.PRIMARY) {
+					addInterfacesPopoverBtnListener(content);
+				}
+			}
+		});
+		btnRow.getChildren().add(button);
+		content.getChildren().add(btnRow);
+	}
 	
-	//this one is used for adding rows in the Insert New VM Form
 	public static void addInfRow(String labelText, VBox content) {
+		//this one is used for adding rows in the Insert New VM Form
 		HBox formRow = new HBox();
 		formRow.getStyleClass().add("vmform-infRow");
 		Label rowLabel = new Label(labelText);

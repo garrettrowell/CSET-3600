@@ -41,7 +41,6 @@
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#insertNewHub" text="Insert New Hub" />
                               <MenuItem mnemonicParsing="false" onAction="#insertNewVm" text="Insert New Vm" />
-                              <MenuItem mnemonicParsing="false" text="Paste" />
                           </items>
                         </ContextMenu>
                      </contextMenu>

@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -30,10 +31,11 @@ public class MyController implements Initializable {
 	AnchorPane anchorPane;
 	@FXML
 	ScrollPane scrollPane;
-
+	
 	// These are the toggle button and the VBox container for the form
 	public static ToggleButton btnEdit = new ToggleButton("Edit");
-
+	public static Button btnAddInf = new Button("Add Infterface");
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
