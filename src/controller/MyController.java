@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.Graphics;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -88,6 +89,7 @@ public class MyController implements Initializable {
 			formWindow.initModality(Modality.WINDOW_MODAL);
 			formWindow.initOwner(scrollPane.getScene().getWindow());
 			formWindow.showAndWait();
+			Graphics.draw(canvas);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -109,6 +111,7 @@ public class MyController implements Initializable {
 			formWindow.initModality(Modality.WINDOW_MODAL);
 			formWindow.initOwner(scrollPane.getScene().getWindow());
 			formWindow.showAndWait();
+			Graphics.draw(canvas);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
