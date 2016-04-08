@@ -70,5 +70,8 @@ public class VM {
 	public void setPosX(int posX) {
 		this.posX = posX;
 	}
-
+	
+	public void removeInf(String inf) {
+		this.getInterfaces().remove(inf);
+	}
 }

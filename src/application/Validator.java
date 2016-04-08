@@ -11,7 +11,7 @@ public class Validator {
 	public static boolean validateName(String name) {
 		boolean valid = true;
 		try {
-			if(name.trim().equals("")) {
+			if(name.trim().isEmpty()) {
 				valid = false;
 			}else {
 				//check every hub
@@ -90,7 +90,6 @@ public class Validator {
 		boolean valid = true;
 		try {
 			Double.parseDouble(ver.trim());
-			System.out.println("Is correct");
 		}catch(NumberFormatException e) {
 			System.out.println("Not an integer");
 			valid = false;
@@ -132,8 +131,27 @@ public class Validator {
 	public static boolean validateVlan(String vlan) {
 		boolean valid = true;
 		try {
-			if(vlan.trim().equals("")) {
+			if(vlan.trim().isEmpty()) {
 				valid = false;
+			}
+		}catch(NullPointerException e) {
+			valid = false;
+		}
+		return valid;
+	}
+	
+	public static boolean validateHubInf(String inf) {
+		boolean valid = false;
+		try {
+			//check for it's format
+			Pattern pat = Pattern.compile(Data.hubInfPattern);
+			Matcher matcher = pat.matcher(inf.toLowerCase().trim());
+			if(matcher.find()) {
+				//check the vm object appointed to the given inf name
+				VM vmObject = Data.vmMap.get(matcher.group(1));
+				if(vmObject.getInterfaces().containsKey(matcher.group(2))) {
+					valid = true;
+				}
 			}
 		}catch(NullPointerException e) {
 			valid = false;

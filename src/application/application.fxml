@@ -37,10 +37,11 @@
 								</AnchorPane>
 							</content>
                      <contextMenu>
-                        <ContextMenu>
+                        <ContextMenu fx:id="contextMenu">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#insertNewHub" text="Insert New Hub" />
                               <MenuItem mnemonicParsing="false" onAction="#insertNewVm" text="Insert New Vm" />
+                              <MenuItem fx:id="deleteMenu" disable="true" mnemonicParsing="false" text="Delete" />
                           </items>
                         </ContextMenu>
                      </contextMenu>

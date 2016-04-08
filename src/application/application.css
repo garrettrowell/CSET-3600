@@ -24,7 +24,7 @@
 .popover-form-textfield-inactive{
 	-fx-min-width: 12px;
 	-fx-control-inner-background: grey;
-	-fx-font: black;
+	-fx-text-fill: black;
 	-fx-highlight-fill: dodgerblue;
 	-fx-background-color: grey;
 	-fx-highlight-text-fill: black;
