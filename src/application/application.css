@@ -39,12 +39,52 @@
 	-fx-highlight-text-fill: black;
 }
 
+.popover-form-buttonRow{
+	-fx-alignment: bottom-right;	
+}
+
+.popover-form-button-enable{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+	-fx-pref-width: 100px;
+	-fx-pref-height: 25px;	
+}
+
+.popover-form-button-enable:hover{
+	-fx-text-fill: black; 
+	-fx-background-color: lightgray;
+	-fx-effect: dropshadow( three-pass-box , dodgerblue , 5, 0.0 , 0 , 1 );	
+}
+
 .toggle-button{
 	-fx-text-fill: black; 
 	-fx-background-color: lightgray;
 }
+
 .toggle-button:hover{
 	-fx-text-fill: black; 
 	-fx-background-color: lightgray;
 	-fx-effect: dropshadow( three-pass-box , dodgerblue , 5, 0.0 , 0 , 1 );
+}
+
+.vmform-infRow{
+	-fx-padding: 5px;
+	-fx-pref-height: 100px;
+	-fx-pref-width: 200px;
+}
+
+.vmform-label{
+	-fx-pref-width: 90px;
+	-fx-font-size: 18px;
+	-fx-font-family: "Times New Roman";
+}
+
+.vmform-invalid-field{
+	-fx-border-color: #F08080;
+	-fx-border-width: 2px;
+}
+
+.hubform-invalid-field{
+	-fx-border-color: #F08080;
+	-fx-border-width: 2px;
 }

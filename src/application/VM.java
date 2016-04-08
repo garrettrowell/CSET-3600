@@ -10,6 +10,7 @@ public class VM {
 	private int posX, posY;
 	private TreeMap<String, String> interfaces = new TreeMap<String, String>();
 
+
 	public String getName() {
 		return name;
 	}
@@ -69,5 +70,8 @@ public class VM {
 	public void setPosX(int posX) {
 		this.posX = posX;
 	}
-
+	
+	public void removeInf(String inf) {
+		this.getInterfaces().remove(inf);
+	}
 }
