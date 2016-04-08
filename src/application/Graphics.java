@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,12 +11,14 @@ import java.util.regex.Pattern;
 import org.controlsfx.control.PopOver;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -33,10 +36,10 @@ import javafx.stage.WindowEvent;
 
 public class Graphics {
 
-	private static Node createHUBNode(HUB hubObject, Pane canvas) {
+	private static Node createHUBNode(HUB hubObject, Pane canvas, ContextMenu contextMenu) {
 		// each hub is represented by a blue rectangle
 		Rectangle node = new Rectangle(Data.nodeLength, Data.nodeWidth);
-		node.setFill(Color.BLUE);
+		node.setFill(Color.AQUAMARINE);
 
 		// the hub name in the rectangle
 		Label lnodeName = new Label(hubObject.getName());
@@ -52,25 +55,55 @@ public class Graphics {
 			@Override
 			public void handle(MouseEvent event) {
 				if(event.getButton() == MouseButton.PRIMARY) {
-					PopOver popOver = new PopOver(createHUBPopOverContent(hubObject, canvas));
+					PopOver popOver = new PopOver(createHUBPopOverContent(hubObject, canvas, contextMenu));
 					popOver.setDetachable(false);
 					popOver.show(nodeContainer);
 					popOver.setOnHiding(new EventHandler<WindowEvent>() {
 						@Override
 						public void handle(WindowEvent e) {
-							hubNodeHidingListener(popOver, hubObject, canvas);
+							hubNodeHidingListener(popOver, hubObject, canvas, contextMenu);
 						}
 					});
 				}
-				
+				if(event.getButton() == MouseButton.SECONDARY) {
+					//if user right click on a HUB then enable the "delete" menu
+					contextMenu.getItems().get(2).setDisable(false);
+					//when user select an object to delete
+					contextMenu.getItems().get(2).setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent e) {
+							String hubName = hubObject.getName();
+							TreeSet<String> interfaces = hubObject.getInfs();
+							for(String inf : interfaces) {
+								Pattern pat = Pattern.compile(Data.hubInfPattern);
+								Matcher matcher = pat.matcher(inf);
+								//delete the VM interface that is connected to the hub
+								if(matcher.find()) {
+									String vmName = matcher.group(1);
+									String vmEth = matcher.group(2);
+									Data.vmMap.get(vmName).removeInf(vmEth);
+								}
+							}
+							//delete the hub
+							Data.hubMap.remove(hubName);
+							draw(canvas, contextMenu);
+						}
+					});
+					//disable the "delete option when the popover closes"
+					contextMenu.setOnHidden(new EventHandler<WindowEvent>() {
+						@Override
+						public void handle(WindowEvent e) {
+							contextMenu.getItems().get(2).setDisable(true);
+						}
+					});
+				}
 			}
-
 		});
 
 		return nodeContainer;
 	}
 
-	private static Node createVMNode(VM vmObject, Pane canvas) {
+	private static Node createVMNode(VM vmObject, Pane canvas, ContextMenu contextMenu) {
 		// each vm is represented by a red rectangle
 		Rectangle node = new Rectangle(Data.nodeLength, Data.nodeWidth);
 		node.setFill(Color.RED);
@@ -89,19 +122,67 @@ public class Graphics {
 			@Override
 			public void handle(MouseEvent event) {
 				if(event.getButton() == MouseButton.PRIMARY) {
-					PopOver popOver = new PopOver(createVMPopOverContent(vmObject, canvas));
+					PopOver popOver = new PopOver(createVMPopOverContent(vmObject, canvas, contextMenu));
 					popOver.setDetachable(false);
 					popOver.show(nodeContainer);
 					popOver.setOnHiding(new EventHandler<WindowEvent>() {
 						@Override
 						public void handle(WindowEvent e) {
-							vmNodeHidingListener(popOver, vmObject, canvas);
+							vmNodeHidingListener(popOver, vmObject, canvas, contextMenu);
+						}
+					});
+				}else if(event.getButton() == MouseButton.SECONDARY) {
+					System.out.println(Data.vmMap);
+					//if user right click on a HUB then enable the "delete" menu
+					contextMenu.getItems().get(2).setDisable(false);
+					//when user select an object to delete
+					contextMenu.getItems().get(2).setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent e) {
+							System.out.println("Delete is clicked");
+							String vmName = vmObject.getName();
+							TreeMap<String, String> interfaces = vmObject.getInterfaces();
+							LinkedHashMap<String, HUB> tempHubMap = Data.hubMap;
+							//look in every hubObject
+							for(Map.Entry<String, HUB> hubEntry : tempHubMap.entrySet()) {
+								TreeSet<String> hubInf = tempHubMap.get(hubEntry.getValue().getName()).getInfs();
+								Pattern pat = Pattern.compile(Data.hubInfPattern);
+								boolean deleteInf = false;
+								ArrayList<String> toRemove = new ArrayList<String>();
+								//look in each hubInf
+								for(String inf : hubInf) {
+									Matcher matcher = pat.matcher(inf);
+									if(matcher.find()) {
+										if(matcher.group(1).toLowerCase().equals(vmName.toLowerCase()) /*&&
+											hubInf.contains(matcher.group(2))*/) {
+											toRemove.add(inf);
+											deleteInf = true;
+										}
+									}
+								}
+								System.out.println(toRemove);
+								if(deleteInf == true){
+									for(String item : toRemove){
+										Data.hubMap.get(hubEntry.getValue().getName()).removeInf(item);
+									}
+								}
+							}
+							//delete the vm
+							Data.vmMap.remove(vmName);
+							draw(canvas, contextMenu);
+							System.out.println(Data.vmMap);
+						}
+					});
+					//disable the "delete option when the popover closes"
+					contextMenu.setOnHidden(new EventHandler<WindowEvent>() {
+						@Override
+						public void handle(WindowEvent e) {
+							contextMenu.getItems().get(2).setDisable(true);
 						}
 					});
 				}
 			}
 		});
-
 		return nodeContainer;
 	}
 
@@ -137,7 +218,7 @@ public class Graphics {
 		content.getChildren().add(headerRow);
 	}
 
-	public static void draw(Pane canvas) {
+	public static void draw(Pane canvas, ContextMenu contextMenu) {
 		System.out.println("Number of Vm's Present " + application.Data.vmMap.keySet().size());
 		System.out.println("Number of Hub's Present " + application.Data.hubMap.keySet().size());
 		// the pane should be cleared each time
@@ -152,7 +233,7 @@ public class Graphics {
 			HUB currentHub = application.Data.hubMap.get(currentHubName);
 			currentHub.setPosX(Data.hubStartPosX);
 			currentHub.setPosY(tempPosY);
-			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas));
+			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas, contextMenu));
 			tempPosY += 150;
 		}
 
@@ -164,12 +245,12 @@ public class Graphics {
 			VM currentVM = application.Data.vmMap.get(currentVMName);
 			currentVM.setPosX(Data.vmStartPosX);
 			currentVM.setPosY(tempPosY);
-			canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas));
+			canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas, contextMenu));
 			tempPosY += 150;
 		}
 	}
 
-	private static void vmBtnListener(VBox content, VM vmObject, Pane canvas) {
+	private static void vmBtnListener(VBox content, VM vmObject, Pane canvas, ContextMenu contextMenu) {
 		// Add ability to go into edit mode for the Textfield
 		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
@@ -207,124 +288,129 @@ public class Graphics {
 							}
 						}
 					}
-					draw(canvas);
+					draw(canvas, contextMenu);
 				}
 				
 			}
 		});
 	}
 	
-	private static void vmNodeHidingListener(PopOver popover, VM vmObject, Pane canvas) {
-		//eveything in the popover
-		VBox contentPane = (VBox) popover.getContentNode();
-		//find the header row
-		HBox headerRow = (HBox) contentPane.getChildren().get(0);
-		//find the toggle button
-		System.out.println(headerRow.getChildren().get(1));
-		ToggleButton toggleBtn = (ToggleButton) headerRow.getChildren().get(1);
-		//the old key used to find the correlating vmObject
-		VM oldVM = vmObject;
-		
-		//only update with it's not in edit mode
-		if(!toggleBtn.isSelected()) {
-			VM newVmObject = new VM();
-			TreeMap<String, String> newInterfaces = new TreeMap<String, String>();
-			for(Node row : contentPane.getChildren()) {
-				if(row instanceof HBox) {
-					ObservableList<Node> childNode = ((HBox) row).getChildren();
-					for(int i = 0; i < childNode.size(); i++) {
-						if(childNode.get(i) instanceof Label) {
-							if(((Label) childNode.get(i)).getText().matches("Name.*")) {
-								String vmName = ((TextField) childNode.get(i + 1)).getText();
-								//only validate name if it's different than the current one
-								if(!oldVM.getName().equals(vmName)) {
-									//make sure name input is a valid name
-									if(Validator.validateName(vmName)){
-										newVmObject.setName(vmName);
+	private static void vmNodeHidingListener(PopOver popover, VM vmObject, Pane canvas, ContextMenu contextMenu) {
+		try{
+			//eveything in the popover
+			VBox contentPane = (VBox) popover.getContentNode();
+			//find the header row
+			HBox headerRow = (HBox) contentPane.getChildren().get(0);
+			//find the toggle button
+			ToggleButton toggleBtn = (ToggleButton) headerRow.getChildren().get(1);
+			//the old key used to find the correlating vmObject
+			VM oldVM = vmObject;
+			
+			//only update with it's not in edit mode
+			if(!toggleBtn.isSelected()) {
+				VM newVmObject = new VM();
+				TreeMap<String, String> newInterfaces = new TreeMap<String, String>();
+				for(Node row : contentPane.getChildren()) {
+					if(row instanceof HBox) {
+						ObservableList<Node> childNode = ((HBox) row).getChildren();
+						for(int i = 0; i < childNode.size(); i++) {
+							if(childNode.get(i) instanceof Label) {
+								if(((Label) childNode.get(i)).getText().matches("Name.*")) {
+									String vmName = ((TextField) childNode.get(i + 1)).getText();
+									//only validate name if it's different than the current one
+									if(!oldVM.getName().equals(vmName)) {
+										//make sure name input is a valid name
+										if(Validator.validateName(vmName)){
+											newVmObject.setName(vmName);
+										}else {
+											//if input is not valid, warn user and keep the old one
+											creatAlert(((Label)childNode.get(i)).getText(), "VM");
+											newVmObject.setName(oldVM.getName());
+										}
 									}else {
-										//if input is not valid, warn user and keep the old one
-										creatAlert(((Label)childNode.get(i)).getText(), "VM");
+										//set it to old name if it did not change
 										newVmObject.setName(oldVM.getName());
 									}
-								}else {
-									//set it to old name if it did not change
-									newVmObject.setName(oldVM.getName());
-								}
-							//same general idea goes for the rest of the labels
-							//if input is different
-							//then test it's validation before making changes
-								//if it's not valid then warn the user
-							//else just set it to the old one
-							}else if(((Label) childNode.get(i)).getText().matches("OS.*")) {
-								String vmOs = ((TextField) childNode.get(i + 1)).getText();
-								if(Validator.validateOs(vmOs)) {
-									newVmObject.setOs(vmOs);
-								}else {
-									creatAlert(((Label)childNode.get(i)).getText(), "VM");
-									newVmObject.setOs(oldVM.getOs());
-								}
-							}else if(((Label) childNode.get(i)).getText().matches("Ver.*")) {
-								String vmVer = ((TextField) childNode.get(i + 1)).getText();
-								if(Validator.validateVer(vmVer)) {
-									newVmObject.setVer(Double.parseDouble(vmVer));
-								}else {
-									creatAlert(((Label)childNode.get(i)).getText(), "VM");
-									newVmObject.setVer(oldVM.getVer());
-								}
-							}else if(((Label) childNode.get(i)).getText().matches("Src.*")) {
-								String vmSrc = ((TextField) childNode.get(i + 1)).getText();
-								if(Validator.validateSrc(vmSrc)) {
-									newVmObject.setSrc(vmSrc);
-								}else {
-									creatAlert(((Label)childNode.get(i)).getText(), "VM");
-									newVmObject.setSrc(oldVM.getSrc());
-								}
-							} else if (((Label) childNode.get(i)).getText().matches("(\\w+?).(\\w+?\\d+?.*)")) {
-								String ipLabel = ((Label) childNode.get(i)).getText();
-								String vmIp = ((TextField) childNode.get(i + 1)).getText();
-								//does the eth# interface already exist?
-								if(oldVM.getInterfaces().containsKey(ipLabel)) {
-									//is the new ip value equal to the old one
-									if(!oldVM.getInterfaces().get(ipLabel).equals(vmIp)) {
-										//if it's a new ip, validate and set it
-										if(Validator.validateIp(vmIp)) {
-											newInterfaces.put(ipLabel, vmIp);
+								//same general idea goes for the rest of the labels
+								//if input is different
+								//then test it's validation before making changes
+									//if it's not valid then warn the user
+								//else just set it to the old one
+								}else if(((Label) childNode.get(i)).getText().matches("OS.*")) {
+									String vmOs = ((TextField) childNode.get(i + 1)).getText();
+									if(Validator.validateOs(vmOs)) {
+										newVmObject.setOs(vmOs);
+									}else {
+										creatAlert(((Label)childNode.get(i)).getText(), "VM");
+										newVmObject.setOs(oldVM.getOs());
+									}
+								}else if(((Label) childNode.get(i)).getText().matches("Ver.*")) {
+									String vmVer = ((TextField) childNode.get(i + 1)).getText();
+									if(Validator.validateVer(vmVer)) {
+										newVmObject.setVer(Double.parseDouble(vmVer));
+									}else {
+										creatAlert(((Label)childNode.get(i)).getText(), "VM");
+										newVmObject.setVer(oldVM.getVer());
+									}
+								}else if(((Label) childNode.get(i)).getText().matches("Src.*")) {
+									String vmSrc = ((TextField) childNode.get(i + 1)).getText();
+									if(Validator.validateSrc(vmSrc)) {
+										newVmObject.setSrc(vmSrc);
+									}else {
+										creatAlert(((Label)childNode.get(i)).getText(), "VM");
+										newVmObject.setSrc(oldVM.getSrc());
+									}
+								} else if (((Label) childNode.get(i)).getText().matches("(\\w+?).(\\w+?\\d+?.*)")) {
+									String ipLabel = ((Label) childNode.get(i)).getText();
+									String vmIp = ((TextField) childNode.get(i + 1)).getText().trim();
+									//does the eth# interface already exist?
+									if(oldVM.getInterfaces().containsKey(ipLabel)) {
+										//is the new ip value equal to the old one
+										if(!oldVM.getInterfaces().get(ipLabel).equals(vmIp)) {
+											//if it's a new ip, validate and set it
+											if(Validator.validateIp(vmIp)) {
+												newInterfaces.put(ipLabel, vmIp);
+											}else {
+												//if not, alert user and set to old ip
+												creatAlert(ipLabel, "VM");
+												newInterfaces.put(ipLabel, oldVM.getInterfaces().get(ipLabel));
+											}
 										}else {
-											//if not, alert user and set to old ip
-											creatAlert(ipLabel, "VM");
+											//if ip value didn't change just set to old value
 											newInterfaces.put(ipLabel, oldVM.getInterfaces().get(ipLabel));
 										}
 									}else {
-										//if ip value didn't change just set to old value
-										newInterfaces.put(ipLabel, oldVM.getInterfaces().get(ipLabel));
-									}
-								}else {
-									//if that eth# doesn't exist yet
-									//validate it and set it
-									//only set the new eth# if the new ip value is valid
-									if(Validator.validateIp(vmIp)) {
-										newInterfaces.put(ipLabel, vmIp);
-									}else {
-										//tell user there was an error and don't insert the new eth# interface
-										creatAlert(ipLabel, "VM");
+										//if that eth# doesn't exist yet
+										//validate it and set it
+										//only set the new eth# if the new ip value is valid
+										if(!vmIp.isEmpty()) {
+											if(Validator.validateIp(vmIp)) {
+												newInterfaces.put(ipLabel, vmIp);
+											}else {
+												//tell user there was an error and don't insert the new eth# interface
+												creatAlert(ipLabel, "VM");
+											}
+										}
 									}
 								}
 							}
 						}
 					}
 				}
+				newVmObject.setInterfaces(newInterfaces);
+				Data.vmMap.replace(oldVM.getName(), newVmObject);
+				//here we don't want to simply delete old entry because of the coordinates
+				//so we update the key to a different key if they change the VM Object name
+				LinkedHashMap<String, VM> updatedMap = Data.replaceVMKey(Data.vmMap, oldVM.getName(), newVmObject.getName());
+				Data.vmMap = updatedMap;
+				draw(canvas, contextMenu);
 			}
-			newVmObject.setInterfaces(newInterfaces);
-			Data.vmMap.replace(oldVM.getName(), newVmObject);
-			//here we don't want to simply delete old entry because of the coordinates
-			//so we update the key to a different key if they change the VM Object name
-			LinkedHashMap<String, VM> updatedMap = Data.replaceVMKey(Data.vmMap, oldVM.getName(), newVmObject.getName());
-			Data.vmMap = updatedMap;
-			draw(canvas);
+		}catch(IndexOutOfBoundsException e) {
+			System.out.println("Something went Wrong");
 		}
 	}
 	
-	private static void hubBtnListener(VBox content, HUB hubObject, Pane canvas) {
+	private static void hubBtnListener(VBox content, HUB hubObject, Pane canvas, ContextMenu contextMenu) {
 		// Add ability to go into edit mode for the Textfield
 		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
@@ -375,100 +461,104 @@ public class Graphics {
 					}
 				}
 				hubObject.setInfs(inf);
-				draw(canvas);
+				draw(canvas, contextMenu);
 			}
 		});
 	}
 	
-	private static void hubNodeHidingListener(PopOver popover, HUB hubObject, Pane canvas) {
-		//eveything in the popover
-		VBox contentPane = (VBox) popover.getContentNode();
-		//find the header row
-		HBox headerRow = (HBox) contentPane.getChildren().get(0);
-		//find the toggle button
-		ToggleButton toggleBtn = (ToggleButton) headerRow.getChildren().get(1);
-		//the old key used to find the correlating vmObject
-		HUB oldHub = hubObject;
-				
-		//only update with it's not in edit mode
-		if(!toggleBtn.isSelected()) {
-			HUB newHubObject = new HUB();
-			TreeSet<String> newInterfaces = new TreeSet<String>();
-			for(Node row : contentPane.getChildren()) {
-				if(row instanceof HBox) {
-					ObservableList<Node> childNode = ((HBox) row).getChildren();
-					for(int i = 0; i < childNode.size(); i++) {
-						if(childNode.get(i) instanceof Label) {
-							if(((Label) childNode.get(i)).getText().matches("Name.*")) {
-								String hubName = ((TextField) childNode.get(i + 1)).getText();
-								//only validate name if it's different than the current one
-								if(!oldHub.getName().equals(hubName)) {
-									//make sure name input is a valid name
-									if(Validator.validateName(hubName)){
-										newHubObject.setName(hubName);
-									}else {
-										//if input is not valid, warn user and keep the old one
-										creatAlert(((Label)childNode.get(i)).getText(), "HUB");
-										newHubObject.setName(oldHub.getName());
-											}
+	private static void hubNodeHidingListener(PopOver popover, HUB hubObject, Pane canvas, ContextMenu contextMenu) {
+		try{
+			//eveything in the popover
+			VBox contentPane = (VBox) popover.getContentNode();
+			//find the header row
+			HBox headerRow = (HBox) contentPane.getChildren().get(0);
+			//find the toggle button
+			ToggleButton toggleBtn = (ToggleButton) headerRow.getChildren().get(1);
+			//the old key used to find the correlating vmObject
+			HUB oldHub = hubObject;
+					
+			//only update with it's not in edit mode
+			if(!toggleBtn.isSelected()) {
+				HUB newHubObject = new HUB();
+				TreeSet<String> newInterfaces = new TreeSet<String>();
+				for(Node row : contentPane.getChildren()) {
+					if(row instanceof HBox) {
+						ObservableList<Node> childNode = ((HBox) row).getChildren();
+						for(int i = 0; i < childNode.size(); i++) {
+							if(childNode.get(i) instanceof Label) {
+								if(((Label) childNode.get(i)).getText().matches("Name.*")) {
+									String hubName = ((TextField) childNode.get(i + 1)).getText();
+									//only validate name if it's different than the current one
+									if(!oldHub.getName().equals(hubName)) {
+										//make sure name input is a valid name
+										if(Validator.validateName(hubName)){
+											newHubObject.setName(hubName);
 										}else {
-											//set it to old name if it did not change
-											newHubObject.setName(oldHub.getName());
-										}
-									//same general idea goes for the rest of the labels
-									//if input is different
-									//then test it's validation before making changes
-										//if it's not valid then warn the user
-									//else just set it to the old one
-									}else if(((Label) childNode.get(i)).getText().matches("Subnet.*")) {
-										String hubSubnet = ((TextField) childNode.get(i + 1)).getText();
-										if(!hubObject.getSubnet().equals(hubSubnet)) {
-											if(Validator.validateIp(hubSubnet)) {
-												newHubObject.setSubnet(hubSubnet);
-											}else {
-												creatAlert(((Label)childNode.get(i)).getText(), "HUB");
-												newHubObject.setSubnet(oldHub.getSubnet());
-											}
-										}else {
-											newHubObject.setSubnet(oldHub.getSubnet());
-										}
-									}else if(((Label) childNode.get(i)).getText().matches("Netmask.*")) {
-										String hubNetmask = ((TextField) childNode.get(i + 1)).getText();
-										if(Validator.validateNetmask(hubNetmask)) {
-											newHubObject.setNetmask(hubNetmask);
-										}else {
+											//if input is not valid, warn user and keep the old one
 											creatAlert(((Label)childNode.get(i)).getText(), "HUB");
-											newHubObject.setNetmask(oldHub.getNetmask());
-										}
-									} else if (((Label) childNode.get(i)).getText().matches("Inf.*")) {
-										String infValue = ((TextField) childNode.get(i + 1)).getText();
-										if(!infValue.isEmpty()) {
-											if(!oldHub.getInfs().contains(infValue)) {
-												if(Validator.validateHubInf(infValue)) {
-													newInterfaces.add(infValue);
-												}else {
-													creatAlert("Inf.", "HUB");
+											newHubObject.setName(oldHub.getName());
 												}
 											}else {
-												newInterfaces.add(infValue);
+												//set it to old name if it did not change
+												newHubObject.setName(oldHub.getName());
+											}
+										//same general idea goes for the rest of the labels
+										//if input is different
+										//then test it's validation before making changes
+											//if it's not valid then warn the user
+										//else just set it to the old one
+										}else if(((Label) childNode.get(i)).getText().matches("Subnet.*")) {
+											String hubSubnet = ((TextField) childNode.get(i + 1)).getText();
+											if(!hubObject.getSubnet().equals(hubSubnet)) {
+												if(Validator.validateIp(hubSubnet)) {
+													newHubObject.setSubnet(hubSubnet);
+												}else {
+													creatAlert(((Label)childNode.get(i)).getText(), "HUB");
+													newHubObject.setSubnet(oldHub.getSubnet());
+												}
+											}else {
+												newHubObject.setSubnet(oldHub.getSubnet());
+											}
+										}else if(((Label) childNode.get(i)).getText().matches("Netmask.*")) {
+											String hubNetmask = ((TextField) childNode.get(i + 1)).getText();
+											if(Validator.validateNetmask(hubNetmask)) {
+												newHubObject.setNetmask(hubNetmask);
+											}else {
+												creatAlert(((Label)childNode.get(i)).getText(), "HUB");
+												newHubObject.setNetmask(oldHub.getNetmask());
+											}
+										} else if (((Label) childNode.get(i)).getText().matches("Inf.*")) {
+											String infValue = ((TextField) childNode.get(i + 1)).getText();
+											if(!infValue.isEmpty()) {
+												if(!oldHub.getInfs().contains(infValue)) {
+													if(Validator.validateHubInf(infValue)) {
+														newInterfaces.add(infValue);
+													}else {
+														creatAlert("Inf.", "HUB");
+													}
+												}else {
+													newInterfaces.add(infValue);
+												}
 											}
 										}
 									}
 								}
 							}
 						}
+						newHubObject.setInfs(newInterfaces);
+						Data.hubMap.replace(oldHub.getName(), newHubObject);
+						//here we don't want to simply delete old entry because of the coordinates
+						//so we update the key to a different key if they change the Hub Object name
+						LinkedHashMap<String, HUB> updatedMap = Data.replaceHUBKey(Data.hubMap, oldHub.getName(), newHubObject.getName());
+						Data.hubMap = updatedMap;
+						draw(canvas, contextMenu);
 					}
-					newHubObject.setInfs(newInterfaces);
-					Data.hubMap.replace(oldHub.getName(), newHubObject);
-					//here we don't want to simply delete old entry because of the coordinates
-					//so we update the key to a different key if they change the Hub Object name
-					LinkedHashMap<String, HUB> updatedMap = Data.replaceHUBKey(Data.hubMap, oldHub.getName(), newHubObject.getName());
-					Data.hubMap = updatedMap;
-					draw(canvas);
-				}
+		}catch(IndexOutOfBoundsException e){
+			System.out.println("Something went wrong");
+		}
 	}
 	
-	private static VBox createHUBPopOverContent(HUB hubObject, Pane canvas) {
+	private static VBox createHUBPopOverContent(HUB hubObject, Pane canvas, ContextMenu contextMenu) {
 		// this content container is everything that is going to go on the
 		// PopOver
 		VBox content = new VBox(5);
@@ -497,12 +587,12 @@ public class Graphics {
 			addRow("Inf:", inf, 15, content, false);
 
 		}
-		hubBtnListener(content, hubObject, canvas);
-		addButtonRow("Add Interfaces", content, "Inf:");
+		hubBtnListener(content, hubObject, canvas, contextMenu);
+		addButtonRow("Add Interfaces", content, "hub");
 		return content;
 	}
 
-	private static VBox createVMPopOverContent(VM vmObject, Pane canvas) {
+	private static VBox createVMPopOverContent(VM vmObject, Pane canvas, ContextMenu contextMenu) {
 		// this content container is everything that is going to go on the
 		// PopOver
 		VBox content = new VBox(5);
@@ -534,34 +624,12 @@ public class Graphics {
 
 			addRow(key, value, 15, content, false);
 		}
-		vmBtnListener(content, vmObject, canvas);
-		
-		ObservableList<Node> popOverContent = content.getChildren();
-		String ethRegex = "(\\w+?)(\\d+?.*)";
-		Pattern ethPattern = Pattern.compile(ethRegex);
-		int nextInterfaceLabel = 0;
-		//determine what is the index tagged at the last eht# on the form
-		for(Node node : popOverContent) {
-			if(node instanceof HBox){
-				for(Node innerNode : ((HBox) node).getChildren()){
-					if( innerNode instanceof Label) {
-						String nodeLabel = ((Label)innerNode).getText();
-						if(nodeLabel.matches(ethRegex)) {
-							Matcher matcher = ethPattern.matcher(nodeLabel);
-							if(matcher.find()) {
-								nextInterfaceLabel = Integer.parseInt(matcher.group(2)) + 1;
-							}
-						}
-					}
-				}
-			}
-			
-		}
-		addButtonRow("Add Interfaces", content, "eth" + String.valueOf(nextInterfaceLabel));
+		vmBtnListener(content, vmObject, canvas, contextMenu);
+		addButtonRow("Add Interfaces", content, "vm");
 		return content;
 	}
 
-	private static void addButtonRow(String btnLabel, VBox content,String rowLabel) {
+	private static void addButtonRow(String btnLabel, VBox content, String type) {
 		//add a row with a button to popovers
 		HBox btnRow = new HBox();
 		btnRow.setId("btnRow");
@@ -572,7 +640,34 @@ public class Graphics {
 			@Override
 			public void handle(MouseEvent event) {
 				if(event.getButton() == MouseButton.PRIMARY) {
-					addRow(rowLabel, "", 15, content, true);
+					ObservableList<Node> popOverContent = content.getChildren();
+					String ethRegex = "(\\w+?)(\\d+?.*)";
+					Pattern ethPattern = Pattern.compile(ethRegex);
+					String nextInterfaceLabel = "";
+					//determine what is the index tagged at the last eht# on the form
+					for(Node node : popOverContent) {
+						if(node instanceof HBox){
+							for(Node innerNode : ((HBox) node).getChildren()){
+								if( innerNode instanceof Label) {
+									String nodeLabel = ((Label)innerNode).getText();
+									if(nodeLabel.matches(ethRegex) && type.trim().toLowerCase().equals("hub")) {
+										Matcher matcher = ethPattern.matcher(nodeLabel);
+										if(matcher.find()) {
+											nextInterfaceLabel = "eth" + String.valueOf(Integer.parseInt(matcher.group(2)) + 1);
+										}else {
+											nextInterfaceLabel = "eth0";
+										}
+									}else if(!nodeLabel.matches(ethRegex) && type.trim().equals("hub")){
+										nextInterfaceLabel = "eth0";
+									}else if(type.trim().toLowerCase().equals("vm")) {
+										
+									}
+								}
+							}
+						}
+						
+					}
+					addRow(nextInterfaceLabel, "", 15, content, true);
 				}
 			}
 		});

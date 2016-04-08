@@ -12,6 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -32,7 +34,10 @@ public class MyController implements Initializable {
 	AnchorPane anchorPane;
 	@FXML
 	ScrollPane scrollPane;
-	
+	@FXML
+	ContextMenu contextMenu;
+	@FXML
+	MenuItem deleteMenu;
 	// These are the toggle button and the VBox container for the form
 	public static ToggleButton btnEdit = new ToggleButton("Edit");
 	public static Button btnAddInf = new Button("Add Infterface");
@@ -70,7 +75,7 @@ public class MyController implements Initializable {
 
 	@FXML
 	private void tabChange() {
-		application.Graphics.draw(canvas);
+		application.Graphics.draw(canvas, contextMenu);
 	}
 	
 	@FXML
@@ -89,7 +94,7 @@ public class MyController implements Initializable {
 			formWindow.initModality(Modality.WINDOW_MODAL);
 			formWindow.initOwner(scrollPane.getScene().getWindow());
 			formWindow.showAndWait();
-			Graphics.draw(canvas);
+			Graphics.draw(canvas, contextMenu);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -111,7 +116,7 @@ public class MyController implements Initializable {
 			formWindow.initModality(Modality.WINDOW_MODAL);
 			formWindow.initOwner(scrollPane.getScene().getWindow());
 			formWindow.showAndWait();
-			Graphics.draw(canvas);
+			Graphics.draw(canvas, contextMenu);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
