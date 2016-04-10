@@ -227,14 +227,18 @@ public class Graphics {
 		// we don't actually want to change the value of Data.hubStartPosY
 		// instead we initially set our tempPosY to the startPos and alter that
 		int tempPosY = Data.hubStartPosY;
+		int tempPosX = Data.hubStartPosX;
 		// Draw a Blue rectangle for each hub
 		for (Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
 			String currentHubName = entry.getKey();
 			HUB currentHub = application.Data.hubMap.get(currentHubName);
-			currentHub.setPosX(Data.hubStartPosX);
+			currentHub.setPosX(tempPosX);
 			currentHub.setPosY(tempPosY);
 			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas, contextMenu));
-			tempPosY += 150;
+			tempPosX += 400;
+			//tempPosY += 150;
+			System.out.println(currentHubName + " x pos = " + application.Data.hubMap.get(currentHubName).getPosX());
+			System.out.println(currentHubName + " y pos = " + application.Data.hubMap.get(currentHubName).getPosY());
 		}
 
 		// we don't actually want to change the value of Data.vmStartPosY either
