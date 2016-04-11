@@ -31,6 +31,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineBuilder;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 
@@ -234,8 +237,11 @@ public class Graphics {
 			HUB currentHub = application.Data.hubMap.get(currentHubName);
 			currentHub.setPosX(tempPosX);
 			currentHub.setPosY(tempPosY);
-			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas, contextMenu));
+			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas, contextMenu));	
 
+			// Draws a horizontal line from the hub to the middle of the space between hubs and vms
+			drawLine(canvas, tempPosX+100, tempPosY+50, tempPosX+150, tempPosY+50);
+			
 			// Draw a Red rectangle for each vm
 			tempPosX += 200;
 			for (Map.Entry<String, VM> vmEntry : application.Data.vmMap.entrySet()) {
@@ -248,18 +254,33 @@ public class Graphics {
 						currentVM.setPosX(tempPosX);
 						currentVM.setPosY(tempPosY);
 						canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas, contextMenu));
+
+						//draws a horizontal line from each vm to the middle of the space between hubs and vms
+						drawLine(canvas, tempPosX, tempPosY+50, tempPosX-50, tempPosY+50);
+						
 						tempPosY += 150;
+
 					}
 				}
 				
 			}
 			
+			//draw vertical in the middle of the space between hubs and vms
+			drawLine(canvas, tempPosX-50, Data.hubStartPosY, tempPosX-50, tempPosY-50);
 			tempPosX += 200;
 			//tempPosY += 150;
-		}
-		
+		}	
 	}
 
+	private static void drawLine(Pane canvas,int startX, int startY, int endX, int endY) {
+		Line drawline = new Line();
+		drawline.setStartX(startX);
+		drawline.setStartY(startY);
+		drawline.setEndX(endX);
+		drawline.setEndY(endY);
+		canvas.getChildren().add(drawline);
+		
+	}
 	private static void vmBtnListener(VBox content, VM vmObject, Pane canvas, ContextMenu contextMenu) {
 		// Add ability to go into edit mode for the Textfield
 		controller.MyController.btnEdit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
