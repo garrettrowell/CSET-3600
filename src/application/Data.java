@@ -21,9 +21,11 @@ public class Data {
 	// Coordinates for node positions and size
 	public static int nodeLength = 100;
 	public static int nodeWidth = 100;
-	public static int hubStartPosX = 50;
+	public static int vlanstartPosX = 50;
+	public static int vlanstartPosY = 50;
+	public static int hubStartPosX = 250;
 	public static int hubStartPosY = 50;
-	public static int vmStartPosX = 250;
+	public static int vmStartPosX = 40;
 	public static int vmStartPosY = 50;
 	// Hash maps containing vm's and hubs
 	public static LinkedHashMap<String, VM> vmMap = new LinkedHashMap<String, VM>();

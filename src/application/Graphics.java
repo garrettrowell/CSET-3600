@@ -144,7 +144,6 @@ public class Graphics {
 						public void handle(ActionEvent e) {
 							System.out.println("Delete is clicked");
 							String vmName = vmObject.getName();
-							TreeMap<String, String> interfaces = vmObject.getInterfaces();
 							LinkedHashMap<String, HUB> tempHubMap = Data.hubMap;
 							//look in every hubObject
 							for(Map.Entry<String, HUB> hubEntry : tempHubMap.entrySet()) {
@@ -189,6 +188,22 @@ public class Graphics {
 		return nodeContainer;
 	}
 
+	private static Node createVlanNode(String nodeLabel, Pane canvas, ContextMenu contextMenu) {
+		int infNumber = 0;
+		for(Map.Entry<String, HUB> entry : Data.hubMap.entrySet()) {
+			infNumber += entry.getValue().getInfs().size();
+		}
+		int vlanHeight = ((infNumber * 100) + ((infNumber - 1) * 50));
+		Rectangle node = new Rectangle(Data.nodeWidth, vlanHeight);
+		node.setFill(Color.ORANGE);
+		
+		Label lnodeName = new Label(nodeLabel);
+		
+		StackPane nodeContainer = new StackPane();
+		nodeContainer.getChildren().addAll(node,lnodeName);
+		nodeContainer.relocate(Data.vlanstartPosX, Data.vlanstartPosY);
+		return nodeContainer;
+	}
 	private static void addRow(String labelText, String textFormText, Integer size, VBox content, boolean addToEnd) {
 		HBox formRow = new HBox(size);
 		formRow.getStyleClass().add("popover-form");
@@ -226,13 +241,16 @@ public class Graphics {
 		System.out.println("Number of Hub's Present " + application.Data.hubMap.keySet().size());
 		// the pane should be cleared each time
 		canvas.getChildren().clear();
+		
+		canvas.getChildren().add(createVlanNode("V2", canvas, contextMenu));
 
 		// we don't actually want to change the value of Data.hubStartPosY
 		// instead we initially set our tempPosY to the startPos and alter that
 		int tempPosX = Data.hubStartPosX;
+		int tempPosY = Data.hubStartPosY;
 		// Draw a Blue rectangle for each hub
 		for (Map.Entry<String, HUB> hubEntry : application.Data.hubMap.entrySet()) {
-			int tempPosY = Data.hubStartPosY;
+			
 			String currentHubName = hubEntry.getKey();
 			HUB currentHub = application.Data.hubMap.get(currentHubName);
 			currentHub.setPosX(tempPosX);
@@ -266,7 +284,9 @@ public class Graphics {
 			}
 			
 			//draw vertical in the middle of the space between hubs and vms
-			drawLine(canvas, tempPosX-50, Data.hubStartPosY, tempPosX-50, tempPosY-50);
+			drawLine(canvas, tempPosX-50, currentHub.getPosY()+50, tempPosX-50, tempPosY-100);
+			//draw horizontal line from the vlan to the hub
+			drawLine(canvas, Data.vlanstartPosX+100, currentHub.getPosY()+50, currentHub.getPosX(), currentHub.getPosY()+50);
 			tempPosX += 200;
 			//tempPosY += 150;
 		}	
