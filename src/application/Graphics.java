@@ -226,28 +226,38 @@ public class Graphics {
 
 		// we don't actually want to change the value of Data.hubStartPosY
 		// instead we initially set our tempPosY to the startPos and alter that
-		int tempPosY = Data.hubStartPosY;
+		int tempPosX = Data.hubStartPosX;
 		// Draw a Blue rectangle for each hub
-		for (Map.Entry<String, HUB> entry : application.Data.hubMap.entrySet()) {
-			String currentHubName = entry.getKey();
+		for (Map.Entry<String, HUB> hubEntry : application.Data.hubMap.entrySet()) {
+			int tempPosY = Data.hubStartPosY;
+			String currentHubName = hubEntry.getKey();
 			HUB currentHub = application.Data.hubMap.get(currentHubName);
-			currentHub.setPosX(Data.hubStartPosX);
+			currentHub.setPosX(tempPosX);
 			currentHub.setPosY(tempPosY);
 			canvas.getChildren().add(application.Graphics.createHUBNode(currentHub, canvas, contextMenu));
-			tempPosY += 150;
-		}
 
-		// we don't actually want to change the value of Data.vmStartPosY either
-		tempPosY = Data.vmStartPosY;
-		// Draw a Red rectangle for each vm
-		for (Map.Entry<String, VM> entry : application.Data.vmMap.entrySet()) {
-			String currentVMName = entry.getKey();
-			VM currentVM = application.Data.vmMap.get(currentVMName);
-			currentVM.setPosX(Data.vmStartPosX);
-			currentVM.setPosY(tempPosY);
-			canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas, contextMenu));
-			tempPosY += 150;
+			// Draw a Red rectangle for each vm
+			tempPosX += 200;
+			for (Map.Entry<String, VM> vmEntry : application.Data.vmMap.entrySet()) {
+				String currentVMName = vmEntry.getKey();
+				VM currentVM = application.Data.vmMap.get(currentVMName);
+				for (Map.Entry<String, String> vmInterface : currentVM.getInterfaces().entrySet()) {
+					//If the the first three octals of the vm's interface match the first three octals of the hub's subnet
+					//Draw the vm to the left of the hub as they are connected
+					if (vmInterface.getValue().replaceAll("\\.\\d{1,3}\\z","").equals(application.Data.hubMap.get(currentHubName).getSubnet().replaceAll("\\.\\d{1,3}\\z", ""))) {
+						currentVM.setPosX(tempPosX);
+						currentVM.setPosY(tempPosY);
+						canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas, contextMenu));
+						tempPosY += 150;
+					}
+				}
+				
+			}
+			
+			tempPosX += 200;
+			//tempPosY += 150;
 		}
+		
 	}
 
 	private static void vmBtnListener(VBox content, VM vmObject, Pane canvas, ContextMenu contextMenu) {
