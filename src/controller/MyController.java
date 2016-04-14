@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.FileWriter;
 import application.Graphics;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -72,9 +73,14 @@ public class MyController implements Initializable {
 	private void fileSave() {
 
 	}
-
+	
 	@FXML
-	private void tabChange() {
+	private void tabEditor() {
+		FileWriter.writeFile(textEditor);
+	}
+	
+	@FXML
+	private void tabGraphical() {
 		application.Graphics.draw(canvas, contextMenu);
 	}
 	

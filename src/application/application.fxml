@@ -17,16 +17,16 @@
 	<children>
 		<TabPane fx:id="tabPane" prefHeight="375.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
 			<tabs>
-				<Tab closable="false" text="Editor">
+				<Tab closable="false" onSelectionChanged="#tabEditor" text="Editor">
 					<content>
 						<AnchorPane minHeight="0.0" minWidth="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
 							<children>
-								<TextArea fx:id="textEditor" cache="true" prefHeight="345.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" />
+								<TextArea fx:id="textEditor" cache="true" editable="false" prefHeight="345.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" />
 							</children>
 						</AnchorPane>
 					</content>
 				</Tab>
-				<Tab onSelectionChanged="#tabChange" text="Graphical">
+				<Tab onSelectionChanged="#tabGraphical" text="Graphical">
 					<content>
 						<ScrollPane fx:id="scrollPane" prefHeight="200.0" prefWidth="200.0">
 							<content>
@@ -64,7 +64,6 @@
 					<items>
                   <MenuItem mnemonicParsing="false" onAction="#insertNewHub" text="Insert New Hub" />
                   <MenuItem mnemonicParsing="false" onAction="#insertNewVm" text="Insert New Vm" />
-						<MenuItem mnemonicParsing="false" text="Delete" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">

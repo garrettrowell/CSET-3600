@@ -1,5 +1,6 @@
 package application;
 
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +146,7 @@ public class Validator {
 		try {
 			//check for it's format
 			Pattern pat = Pattern.compile(Data.hubInfPattern);
-			Matcher matcher = pat.matcher(inf.toLowerCase().trim());
+			Matcher matcher = pat.matcher(inf.trim());
 			if(matcher.find()) {
 				//check the vm object appointed to the given inf name
 				VM vmObject = Data.vmMap.get(matcher.group(1));
