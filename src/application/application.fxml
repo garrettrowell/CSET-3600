@@ -13,7 +13,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MyController">
+<AnchorPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MyController">
 	<children>
 		<TabPane fx:id="tabPane" prefHeight="375.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
 			<tabs>
@@ -54,6 +54,7 @@
 			<menus>
 				<Menu mnemonicParsing="false" text="File">
 					<items>
+                  <MenuItem mnemonicParsing="false" onAction="#fileNew" text="New" />
 						<MenuItem mnemonicParsing="false" onAction="#fileSave" text="Save" />
 						<MenuItem mnemonicParsing="false" onAction="#fileSaveAs" text="SaveAs" />
 						<MenuItem mnemonicParsing="false" onAction="#fileOpen" text="Open" />

@@ -40,7 +40,7 @@ public class FileWriter {
 			if(item.equals(hubInf.last())) {
 				inf += item;
 			}else {
-				inf += item + ",";
+				inf += item + ", ";
 			}
 		}
 		return inf;

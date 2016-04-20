@@ -58,4 +58,9 @@ public class Data {
 		}
 		return newMap;
 	}
+	
+	public static void clearData() {
+		vmMap.clear();
+		hubMap.clear();
+	}
 }

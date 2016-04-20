@@ -8,12 +8,61 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Optional;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 public class FileOperations {
-
+	public static void newFile(TextArea editor, Pane canvas, ContextMenu contextMenu) {
+		if(!editor.getText().isEmpty()) {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Save File?");
+			alert.setHeaderText("Save File?");
+			alert.setContentText("Would you like to save file before creating a new one?");
+			
+			ButtonType yesButton = new ButtonType("Yes");
+			ButtonType noButton = new ButtonType("No");
+			ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+			
+			alert.getButtonTypes().setAll(yesButton, noButton, cancelButton);
+			
+			Optional<ButtonType> result = alert.showAndWait();
+			if(result.get() == yesButton) {
+				//allow the user to save the file before clearing it
+				File selectedFile = application.FileOperations.fileSaveAsConf();
+				if (selectedFile != null) {
+					application.FileOperations.writeFile(selectedFile, editor.getParagraphs());
+				}
+				editor.clear();
+				Data.clearData();
+				application.Graphics.draw(canvas, contextMenu);
+				controller.MyController.currentFile = null;
+			}else if(result.get() == noButton) {
+				//user don't want to save before making new file
+				editor.clear();
+				Data.clearData();
+				controller.MyController.currentFile = null;
+			}
+			else {
+				alert.close();
+			}
+		}else {
+			//if there nothing in the text editor don't ask to save
+			editor.clear();
+			Data.clearData();
+			application.Graphics.draw(canvas, contextMenu);
+			controller.MyController.currentFile = null;
+		}
+	}
+	
 	public static String readFile(File inFile) {
 		StringBuilder stringBuffer = new StringBuilder();
 		BufferedReader bufferedReader = null;
@@ -60,6 +109,7 @@ public class FileOperations {
 	public static File fileOpenConf() {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
+		controller.MyController.currentFile = selectedFile;
 		FileParser fileParser = new FileParser(selectedFile);
 		return selectedFile;
 	}
@@ -69,6 +119,7 @@ public class FileOperations {
 		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*.*"),
 				new FileChooser.ExtensionFilter(".cfg", "*.cfg"));
 		File selectedFile = fileChooser.showSaveDialog(null);
+		controller.MyController.currentFile = selectedFile;
 		return selectedFile;
 	}
 

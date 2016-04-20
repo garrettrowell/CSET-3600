@@ -249,9 +249,11 @@ public class Graphics {
 		System.out.println("Number of Hub's Present " + application.Data.hubMap.keySet().size());
 		// the pane should be cleared each time
 		canvas.getChildren().clear();
-
-		canvas.getChildren().add(createVlanNode("V2", canvas, contextMenu));
-
+		
+		if(!Data.vmMap.isEmpty() && !Data.hubMap.isEmpty()) {
+			canvas.getChildren().add(createVlanNode("V2", canvas, contextMenu));
+		}
+		
 		// we don't actually want to change the value of Data.hubStartPosY
 		// instead we initially set our tempPosY to the startPos and alter that
 		int tempPosX = Data.hubStartPosX;
