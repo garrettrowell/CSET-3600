@@ -284,8 +284,10 @@ public class Graphics {
 					// If the the first three octals of the vm's interface match
 					// the first three octals of the hub's subnet
 					// Draw the vm to the left of the hub as they are connected
-					if (vmInterface.getValue().replaceAll("\\.\\d{1,3}\\z", "").equals(
-							application.Data.hubMap.get(currentHubName).getSubnet().replaceAll("\\.\\d{1,3}\\z", ""))) {
+					int ipClass = Data.getIPClass(application.Data.hubMap.get(currentHubName).getNetmask());
+					String replaceRegex = "\\.\\d{1,"+ String.valueOf(ipClass) +"}\\z";
+					if (vmInterface.getValue().replaceAll(replaceRegex, "").equals(
+							application.Data.hubMap.get(currentHubName).getSubnet().replaceAll(replaceRegex, ""))) {
 						currentVM.setPosX(tempPosX);
 						currentVM.setPosY(tempPosY);
 						canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas, contextMenu));
@@ -593,7 +595,7 @@ public class Graphics {
 									// else just set it to the old one
 								} else if (((Label) childNode.get(i)).getText().matches("Subnet.*")) {
 									String hubSubnet = ((TextField) childNode.get(i + 1)).getText();
-									if (!hubObject.getSubnet().equals(hubSubnet)) {
+									if (!oldHub.getSubnet().equals(hubSubnet)) {
 										if (Validator.validateIp(hubSubnet)) {
 											newHubObject.setSubnet(hubSubnet);
 										} else {
@@ -618,9 +620,15 @@ public class Graphics {
 										// if the interface is not in the old
 										// ones
 										if (!oldHub.getInfs().contains(infValue)) {
+											String hubNetmask = null;
+											if(!hubObject.getSubnet().equals(hubNetmask)) {
+												hubNetmask = newHubObject.getNetmask();
+											}else {
+												hubNetmask = oldHub.getNetmask();
+											}
 											// if new inf value is valid then
 											// insert the new one
-											if (Validator.validateHubInf(infValue)) {
+											if (Validator.validateHubInf(infValue) && Validator.validateSubnetting(newHubObject.getNetmask(), infValue, newHubObject.getSubnet())) {
 												newInterfaces.add(infValue);
 											} else {
 												creatAlert("Inf.", "HUB");

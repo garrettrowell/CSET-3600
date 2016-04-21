@@ -62,7 +62,7 @@ public class InsertVMFormController implements Initializable{
 	private void addInfRow(){
 		//format string for the eth# label
 		String eth = "eth";
-		String infName = eth + Integer.toString(index) + ":";
+		String infName = eth + Integer.toString(index);
 		
 		//add more rows for more interfaces 
 		Graphics.addInfRow(infName, infRow);

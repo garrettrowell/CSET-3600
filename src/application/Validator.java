@@ -151,7 +151,36 @@ public class Validator {
 				//check the vm object appointed to the given inf name
 				VM vmObject = Data.vmMap.get(matcher.group(1));
 				if(vmObject.getInterfaces().containsKey(matcher.group(2))) {
+					//the number of octets for hub interface to match vm ip 
 					valid = true;
+				}
+			}
+		}catch(NullPointerException e) {
+			valid = false;
+		}
+		return valid;
+	}
+	
+	public static boolean validateSubnetting(String hubNetmask, String hubInf, String hubSubnet) {
+		boolean valid = true;
+		try {
+			int ipClass = Data.getIPClass(hubNetmask);
+			Pattern hubInfPat = Pattern.compile(Data.hubInfPattern);
+			Matcher hubInfMatcher = hubInfPat.matcher(hubInf);
+			
+			Pattern ipPat = Pattern.compile(Data.IpPattern);
+			if(hubInfMatcher.find()) {
+				String vmInf = Data.vmMap.get(hubInfMatcher.group(1)).getInterfaces().get(hubInfMatcher.group(2));
+				
+				Matcher hubSubnetMatcher = ipPat.matcher(hubSubnet);
+				Matcher vmInfMatcher = ipPat.matcher(vmInf);
+				
+				if(hubSubnetMatcher.find() && vmInfMatcher.find()) {
+					for(int i = 1; i <= ipClass; i++) {
+						if(!hubSubnetMatcher.group(i).equals(vmInfMatcher.group(i))) {
+							valid = false;
+						}
+					}
 				}
 			}
 		}catch(NullPointerException e) {

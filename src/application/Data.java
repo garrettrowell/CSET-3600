@@ -2,6 +2,8 @@ package application;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Data {
 	// Regex used to parse various patterns of the config file
@@ -30,6 +32,21 @@ public class Data {
 	// Hash maps containing vm's and hubs
 	public static LinkedHashMap<String, VM> vmMap = new LinkedHashMap<String, VM>();
 	public static LinkedHashMap<String, HUB> hubMap = new LinkedHashMap<String, HUB>();
+	
+	public static int getIPClass(String hubNetmask) {
+		int ipClass = 0;
+		Pattern patt = Pattern.compile(IpPattern);
+		Matcher match = patt.matcher(hubNetmask);
+		
+		if(match.find()) {
+			for(int i = 1; i < 5; i++) {
+				if(Integer.parseInt(match.group(i).toString()) > 0) {
+					ipClass++;
+				}
+			}
+		}
+		return ipClass;
+	}
 	
 	public static LinkedHashMap<String, VM> replaceVMKey(LinkedHashMap<String, VM> map, String oldKey, String newKey){
 		LinkedHashMap<String, VM> temp = map;
