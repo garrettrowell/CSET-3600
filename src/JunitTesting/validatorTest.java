@@ -22,7 +22,6 @@ public class validatorTest {
 		TreeSet<String> hubInterfaces = new TreeSet<String>();
 		hubInterfaces.add("Vm1.eth0");
 		hubInterfaces.add("Vm2.eth0");
-		hubInterfaces.add("Vm3.eth1");
 		
 		hubObject = new HUB();
 		hubObject.setName("Hub1");
@@ -215,5 +214,29 @@ public class validatorTest {
 	public void emptyVlanTest() {
 		boolean testVlan = Validator.validateVlan("");
 		assertEquals(false, testVlan);
+	}
+	
+	@Test
+	public void nullHubInfTest() {
+		boolean testHubInf = Validator.validateHubInf(null);
+		assertEquals(false, testHubInf);
+	}
+	
+	@Test
+	public void emptyHubInfTest() {
+		boolean testHubInf = Validator.validateHubInf("");
+		assertEquals(false, testHubInf);
+	}
+	
+	@Test
+	public void validHubInfTest() {
+		boolean testHubInf = Validator.validateHubInf("vm2.eth0");
+		assertEquals(true, testHubInf);
+	}
+	
+	@Test
+	public void novmHubInfTest() {
+		boolean testHubInf = Validator.validateHubInf("vm2.eth1");
+		assertEquals(false, testHubInf);
 	}
 }

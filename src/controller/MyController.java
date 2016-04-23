@@ -1,14 +1,13 @@
 package controller;
 
 import java.io.File;
-import java.net.URL;
-import java.util.ResourceBundle;
 
+import application.FileOperations;
+import application.FileWriter;
 import application.Graphics;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,7 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class MyController implements Initializable {
+public class MyController{
 	@FXML
 	TextArea textEditor;
 	@FXML
@@ -31,7 +30,7 @@ public class MyController implements Initializable {
 	@FXML
 	Pane canvas;
 	@FXML
-	AnchorPane anchorPane;
+	AnchorPane anchorPane, mainWindow;
 	@FXML
 	ScrollPane scrollPane;
 	@FXML
@@ -41,17 +40,18 @@ public class MyController implements Initializable {
 	// These are the toggle button and the VBox container for the form
 	public static ToggleButton btnEdit = new ToggleButton("Edit");
 	public static Button btnAddInf = new Button("Add Infterface");
-	
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-
-	}
+	public static File currentFile = null;
 
 	@FXML
 	private void fileClose() {
 		Platform.exit();
 	}
-
+	
+	@FXML
+	private void fileNew() {
+		FileOperations.newFile(textEditor, canvas, contextMenu);
+	}
+	
 	@FXML
 	private void fileOpen() {
 		File selectedFile = application.FileOperations.fileOpenConf();
@@ -70,11 +70,24 @@ public class MyController implements Initializable {
 
 	@FXML
 	private void fileSave() {
-
+		try {
+			if(currentFile.exists()) {
+				FileOperations.writeFile(currentFile, textEditor.getParagraphs());
+			}else {
+				fileSaveAs();
+			}
+		}catch(NullPointerException e) {
+			System.out.println("Current file not set");
+		}
 	}
-
+	
 	@FXML
-	private void tabChange() {
+	private void tabEditor() {
+		FileWriter.writeFile(textEditor);
+	}
+	
+	@FXML
+	private void tabGraphical() {
 		application.Graphics.draw(canvas, contextMenu);
 	}
 	
