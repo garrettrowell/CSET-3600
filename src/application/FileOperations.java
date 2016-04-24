@@ -110,6 +110,7 @@ public class FileOperations {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
 		controller.MyController.currentFile = selectedFile;
+		FileParser fileParser = new FileParser(selectedFile);
 		return selectedFile;
 	}
 
