@@ -19,7 +19,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FileOperations {
 	public static void newFile(TextArea editor, Pane canvas, ContextMenu contextMenu) {
@@ -111,7 +110,6 @@ public class FileOperations {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
 		controller.MyController.currentFile = selectedFile;
-		FileParser fileParser = new FileParser(selectedFile);
 		return selectedFile;
 	}
 
