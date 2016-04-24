@@ -157,12 +157,7 @@ public class Graphics {
 									Matcher matcher = pat.matcher(inf);
 									if (matcher.find()) {
 										if (matcher.group(1).toLowerCase().equals(vmName
-												.toLowerCase()) /*
-																 * && hubInf.
-																 * contains(
-																 * matcher.group
-																 * (2))
-																 */) {
+												.toLowerCase())) {
 											toRemove.add(inf);
 											deleteInf = true;
 										}
@@ -178,7 +173,6 @@ public class Graphics {
 							// delete the vm
 							Data.vmMap.remove(vmName);
 							draw(canvas, contextMenu);
-							System.out.println(Data.vmMap);
 						}
 					});
 					// disable the "delete option when the popover closes"
@@ -196,10 +190,19 @@ public class Graphics {
 
 	private static Node createVlanNode(String nodeLabel, Pane canvas, ContextMenu contextMenu) {
 		int infNumber = 0;
-		for (Map.Entry<String, HUB> entry : Data.hubMap.entrySet()) {
-			infNumber += entry.getValue().getInfs().size();
+
+		if (Data.hubMap.size() == 0) {
+			infNumber =1;
+		} else {
+			for (Map.Entry<String, HUB> entry : Data.hubMap.entrySet()) {
+				if (entry.getValue().getInfs().size() == 0) {
+					infNumber += 1;
+				} else {
+					infNumber += entry.getValue().getInfs().size();
+				}
+			}
 		}
-		int vlanHeight = ((infNumber * 100) + ((infNumber - 1) * 50));
+		int vlanHeight = ((infNumber * 100) + ((infNumber -1) * 50));
 		Rectangle node = new Rectangle(Data.nodeWidth, vlanHeight);
 		node.setFill(Color.ORANGE);
 
@@ -208,6 +211,7 @@ public class Graphics {
 		StackPane nodeContainer = new StackPane();
 		nodeContainer.getChildren().addAll(node, lnodeName);
 		nodeContainer.relocate(Data.vlanstartPosX, Data.vlanstartPosY);
+		
 		return nodeContainer;
 	}
 
@@ -250,9 +254,10 @@ public class Graphics {
 		// the pane should be cleared each time
 		canvas.getChildren().clear();
 		
-		if(!Data.vmMap.isEmpty() && !Data.hubMap.isEmpty()) {
+		//if(!Data.vmMap.isEmpty() && !Data.hubMap.isEmpty()) {
+		//if(!(Data.hubMap.size() == 0)) {
 			canvas.getChildren().add(createVlanNode("V2", canvas, contextMenu));
-		}
+		//}
 		
 		// we don't actually want to change the value of Data.hubStartPosY
 		// instead we initially set our tempPosY to the startPos and alter that
@@ -269,7 +274,7 @@ public class Graphics {
 			// cashe wither the hub has connections
 			// if it don't then theres no need to draw the lines
 			boolean haveConnections = !currentHub.getInfs().isEmpty();
-			// Draws a horizontal line from the hub to the middle of the space
+			//----- Draws a horizontal line from the hub to the middle of the space
 			// between hubs and vms
 			if (haveConnections) {
 				drawLine(canvas, tempPosX + 100, tempPosY + 50, tempPosX + 150, tempPosY + 50);
@@ -288,6 +293,7 @@ public class Graphics {
 					String replaceRegex = "\\.\\d{1,"+ String.valueOf(ipClass) +"}\\z";
 					if (vmInterface.getValue().replaceAll(replaceRegex, "").equals(
 							application.Data.hubMap.get(currentHubName).getSubnet().replaceAll(replaceRegex, ""))) {
+						application.Data.hubMap.get(currentHubName).addInf(currentVM.getName()+"."+vmInterface.getKey());
 						currentVM.setPosX(tempPosX);
 						currentVM.setPosY(tempPosY);
 						canvas.getChildren().add(application.Graphics.createVMNode(currentVM, canvas, contextMenu));
@@ -303,6 +309,9 @@ public class Graphics {
 					}
 				}
 
+			}
+			if (!haveConnections){
+				tempPosY +=150;
 			}
 
 			// draw vertical in the middle of the space between hubs and vms

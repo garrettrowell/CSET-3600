@@ -110,14 +110,12 @@ public class FileOperations {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
 		controller.MyController.currentFile = selectedFile;
-		FileParser fileParser = new FileParser(selectedFile);
 		return selectedFile;
 	}
 
 	public static File fileSaveAsConf() {
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*.*"),
-				new FileChooser.ExtensionFilter(".cfg", "*.cfg"));
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(".cfg", "*.cfg"));
 		File selectedFile = fileChooser.showSaveDialog(null);
 		controller.MyController.currentFile = selectedFile;
 		return selectedFile;

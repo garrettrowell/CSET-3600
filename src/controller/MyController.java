@@ -108,6 +108,8 @@ public class MyController{
 			formWindow.initOwner(scrollPane.getScene().getWindow());
 			formWindow.showAndWait();
 			Graphics.draw(canvas, contextMenu);
+			Graphics.draw(canvas, contextMenu);
+			FileWriter.writeFile(textEditor);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -130,6 +132,8 @@ public class MyController{
 			formWindow.initOwner(scrollPane.getScene().getWindow());
 			formWindow.showAndWait();
 			Graphics.draw(canvas, contextMenu);
+			Graphics.draw(canvas, contextMenu);
+			FileWriter.writeFile(textEditor);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
