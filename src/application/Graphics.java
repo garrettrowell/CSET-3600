@@ -90,7 +90,6 @@ public class Graphics {
 							// delete the hub
 							Data.hubMap.remove(hubName);
 							draw(canvas, contextMenu);
-							draw(canvas, contextMenu);
 						}
 					});
 					// disable the "delete option when the popover closes"
@@ -158,12 +157,7 @@ public class Graphics {
 									Matcher matcher = pat.matcher(inf);
 									if (matcher.find()) {
 										if (matcher.group(1).toLowerCase().equals(vmName
-												.toLowerCase()) /*
-																 * && hubInf.
-																 * contains(
-																 * matcher.group
-																 * (2))
-																 */) {
+												.toLowerCase())) {
 											toRemove.add(inf);
 											deleteInf = true;
 										}
@@ -179,8 +173,6 @@ public class Graphics {
 							// delete the vm
 							Data.vmMap.remove(vmName);
 							draw(canvas, contextMenu);
-							draw(canvas, contextMenu);
-							//System.out.println(Data.vmMap);
 						}
 					});
 					// disable the "delete option when the popover closes"
@@ -383,7 +375,6 @@ public class Graphics {
 						}
 					}
 					draw(canvas, contextMenu);
-					draw(canvas, contextMenu);
 				}
 
 			}
@@ -514,7 +505,6 @@ public class Graphics {
 						newVmObject.getName());
 				Data.vmMap = updatedMap;
 				draw(canvas, contextMenu);
-				draw(canvas, contextMenu);
 			}
 		} catch (IndexOutOfBoundsException e) {
 			System.out.println("Something went Wrong");
@@ -560,7 +550,6 @@ public class Graphics {
 							}
 						}
 					}
-					draw(canvas, contextMenu);
 					draw(canvas, contextMenu);
 				}
 			}
@@ -671,7 +660,6 @@ public class Graphics {
 				LinkedHashMap<String, HUB> updatedMap = Data.replaceHUBKey(Data.hubMap, oldHub.getName(),
 						newHubObject.getName());
 				Data.hubMap = updatedMap;
-				draw(canvas, contextMenu);
 				draw(canvas, contextMenu);
 			}
 		} catch (IndexOutOfBoundsException e) {
