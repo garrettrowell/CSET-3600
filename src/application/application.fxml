@@ -67,11 +67,6 @@
                   <MenuItem mnemonicParsing="false" onAction="#insertNewVm" text="Insert New Vm" />
 					</items>
 				</Menu>
-				<Menu mnemonicParsing="false" text="Help">
-					<items>
-						<MenuItem mnemonicParsing="false" text="About" />
-					</items>
-				</Menu>
 			</menus>
 		</MenuBar>
 	</children>
