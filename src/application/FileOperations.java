@@ -19,6 +19,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FileOperations {
 	public static void newFile(TextArea editor, Pane canvas, ContextMenu contextMenu) {
@@ -116,8 +117,7 @@ public class FileOperations {
 
 	public static File fileSaveAsConf() {
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*.*"),
-				new FileChooser.ExtensionFilter(".cfg", "*.cfg"));
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(".cfg", "*.cfg"));
 		File selectedFile = fileChooser.showSaveDialog(null);
 		controller.MyController.currentFile = selectedFile;
 		return selectedFile;
