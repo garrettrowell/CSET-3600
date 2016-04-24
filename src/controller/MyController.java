@@ -109,6 +109,7 @@ public class MyController{
 			formWindow.showAndWait();
 			Graphics.draw(canvas, contextMenu);
 			Graphics.draw(canvas, contextMenu);
+			FileWriter.writeFile(textEditor);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -132,6 +133,7 @@ public class MyController{
 			formWindow.showAndWait();
 			Graphics.draw(canvas, contextMenu);
 			Graphics.draw(canvas, contextMenu);
+			FileWriter.writeFile(textEditor);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
